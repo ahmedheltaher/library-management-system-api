@@ -1,4 +1,4 @@
-import { Model, Sequelize } from 'sequelize';
+import { Model, Op, Sequelize } from 'sequelize';
 import { configurations, loggers } from '../../core';
 
 export const sequelizeConnection = new Sequelize({
@@ -11,6 +11,9 @@ export const sequelizeConnection = new Sequelize({
 	pool: { max: 20, min: 0, acquire: 30_000, idle: 10_000 },
 	logging: (message: string) => loggers.database.info(message),
 	benchmark: true,
+	operatorsAliases: {
+		$like: Op.like,
+	},
 });
 
 async function syncModel(model: typeof Model, force: boolean) {

@@ -9,7 +9,7 @@ interface AdminAttributes {
 	name: string;
 	password: string;
 	email: string;
-	is_super_admin: boolean;
+	isSuperAdmin: boolean;
 }
 export interface AdminInput
 	extends Optional<AdminAttributes, 'id'>,
@@ -20,7 +20,7 @@ export class Admin extends Model<AdminAttributes, AdminInput> implements AdminAt
 	public name!: string;
 	public password!: string;
 	public email!: string;
-	public is_super_admin!: boolean;
+	public isSuperAdmin!: boolean;
 
 	comparePassword(password: string): boolean {
 		return bcrypt.compareSync(password, this.dataValues.password);
@@ -44,7 +44,7 @@ Admin.init(
 				this.setDataValue('password', bcrypt.hashSync(rowPassword, configurations.bcrypt.saltOrRounds));
 			},
 		},
-		is_super_admin: FieldFactory.Boolean().DefaultValue(false).Build(),
+		isSuperAdmin: FieldFactory.Boolean().DefaultValue(false).Build(),
 	},
 	{
 		...FieldFactory.BasicModelConfig({ sequelize: sequelizeConnection, tableName: 'admins', timestamps: true }),

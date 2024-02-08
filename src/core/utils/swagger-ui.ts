@@ -9,6 +9,6 @@ export const swaggerUIOptions: FastifySwaggerUiOptions = {
 		defaultModelExpandDepth: 10,
 	},
 	theme: {
-		title: 'Key-Jat Backend documentation',
+		title: 'library-management-system-api',
 	},
 };

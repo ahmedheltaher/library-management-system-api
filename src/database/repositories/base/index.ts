@@ -15,11 +15,11 @@ interface BaseRepositoryInterface<M extends Model, I extends CreationAttributes<
 export class BaseRepository<M extends Model, I extends CreationAttributes<M>> implements BaseRepositoryInterface<M, I> {
 	constructor(private model: ModelStatic<M>) {}
 
-	public async findAll(options?: FindOptions): Promise<Array<M>> {
+	public async findAll(options?: FindOptions<M>): Promise<Array<M>> {
 		return this.model.findAll(options);
 	}
 
-	public async findOne(options: FindOptions): Promise<M | null> {
+	public async findOne(options: FindOptions<M>): Promise<M | null> {
 		return await this.model.findOne(options);
 	}
 

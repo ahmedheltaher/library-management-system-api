@@ -3,22 +3,19 @@ import { FastifyDynamicSwaggerOptions } from '@fastify/swagger';
 export const swaggerOptions: FastifyDynamicSwaggerOptions = {
 	swagger: {
 		info: {
-			title: 'KeyJat Server',
-			description: 'The APIs for KeyJat',
+			title: 'Library management system api',
+			description: 'This API for Library management system',
 			version: '0.1.0',
 		},
 		schemes: ['http'],
 		consumes: ['application/json'],
 		produces: ['application/json'],
 		tags: [
-			{ name: 'Application', description: 'Application related end-points' },
-			{ name: 'User', description: 'User related end-points' },
-
-			{ name: 'Web', description: 'Web related end-points' },
-			{ name: 'Mobile', description: 'Mobile related end-points' },
+			{ name: 'Book', description: 'Book related end-points' },
+			{ name: 'Borrower', description: 'Borrower related end-points' },
 		],
 		securityDefinitions: {
-			apiKey: { type: 'apiKey', name: 'x-session-key', in: 'header' },
+			apiKey: { type: 'apiKey', name: 'authentication', in: 'header' },
 		},
 	},
 };

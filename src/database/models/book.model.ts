@@ -7,8 +7,8 @@ interface BookAttributes {
 	title: string;
 	author: string;
 	ISBN: string;
-	available_quantity: number;
-	shelf_location: string;
+	availableQuantity: number;
+	shelfLocation: string;
 }
 export interface BookInput
 	extends Optional<BookAttributes, 'id'>,
@@ -19,8 +19,8 @@ export class Book extends Model<BookAttributes, BookInput> implements BookAttrib
 	public title!: string;
 	public author!: string;
 	public ISBN!: string;
-	public available_quantity!: number;
-	public shelf_location!: string;
+	public availableQuantity!: number;
+	public shelfLocation!: string;
 
 
 	toJSON() {
@@ -36,8 +36,8 @@ Book.init(
 		title: FieldFactory.String().NotNull().Build(),
 		author: FieldFactory.String().NotNull().Build(),
 		ISBN: FieldFactory.String().NotNull().Unique().Build(),
-		available_quantity: FieldFactory.Integer().NotNull().Build(),
-		shelf_location: FieldFactory.String().NotNull().Unique().Build(),
+		availableQuantity: FieldFactory.Integer().NotNull().Build(),
+		shelfLocation: FieldFactory.String().NotNull().Unique().Build(),
 	},
 	{
 		...FieldFactory.BasicModelConfig({ sequelize: sequelizeConnection, tableName: 'books', timestamps: true }),

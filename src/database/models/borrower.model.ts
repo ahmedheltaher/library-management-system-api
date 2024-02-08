@@ -3,7 +3,7 @@ import { Model, Optional } from 'sequelize';
 import { FieldFactory, IDates, JSONSerializer } from '../utils';
 import { sequelizeConnection } from '../server';
 import { configurations } from '../../core';
-import { Borrowing } from './borrowings.model';
+import { Borrowing } from './borrowing.model';
 import { Book } from './book.model';
 
 interface BorrowerAttributes {
@@ -27,7 +27,7 @@ export class Borrower extends Model<BorrowerAttributes, BorrowerInput> implement
 	}
 
 	toJSON() {
-		return this.jsonSerializer.toJSON(this.dataValues, ['createdAt', 'updatedAt']);
+		return this.jsonSerializer.toJSON(this.dataValues, ['updatedAt'], { createdAt: 'registrationDate' });
 	}
 
 	private jsonSerializer = new JSONSerializer<BorrowerAttributes>();
@@ -54,14 +54,14 @@ Borrower.init(
 
 Borrower.belongsToMany(Book, {
 	through: Borrowing,
-	foreignKey: 'borrower_id',
+	foreignKey: 'borrowerId',
 	as: 'books',
 	onDelete: 'cascade',
 	hooks: true,
 });
 Book.belongsToMany(Borrower, {
 	through: Borrowing,
-	foreignKey: 'book_id',
+	foreignKey: 'bookId',
 	hooks: true,
 	onDelete: 'cascade',
 	as: 'borrowers',

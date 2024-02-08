@@ -41,9 +41,14 @@ const configurations = {
 
 	api: {
 		prefix: '/api',
+		version:'/v1'
 	},
 
 	bcrypt: { saltOrRounds: 8 },
+
+	isDevelopmentEnvironment() {
+		return (process.env.NODE_ENV || "").toUpperCase() === 'DEVELOPMENT';
+	}
 };
 
 export { configurations };

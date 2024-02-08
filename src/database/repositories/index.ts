@@ -1,4 +1,4 @@
 export * from './admin.repository'
 export * from './book.repository'
-export * from './borrowers.repository'
-export * from './borrowings.repository'
+export * from './borrower.repository'
+export * from './borrowing.repository'

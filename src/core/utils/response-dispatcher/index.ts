@@ -6,10 +6,7 @@ export const ERROR_RESPONSE_MESSAGES = [
 	'CONFLICT',
 ] as const;
 
-type CookieConfiguration = {
-	value: string;
-	ttl?: number;
-};
+
 
 export type ErrorResponseMessages = (typeof ERROR_RESPONSE_MESSAGES)[number];
 
@@ -18,7 +15,6 @@ export type HandlerResult =
 			status: true;
 			data: Record<string, any>;
 			headers?: Record<string, any>;
-			cookies?: Record<string, CookieConfiguration>;
 	  }
 	| {
 			status: false;
@@ -28,7 +24,6 @@ export type HandlerResult =
 				statusCode?: number;
 			};
 			headers?: Record<string, any>;
-			cookies?: Record<string, CookieConfiguration>;
 	  };
 
 export type ResponseDetails = {
@@ -67,14 +62,13 @@ export type GenerateResponseResult = {
 	code: number;
 	body: Record<string, any>;
 	headers: Record<string, any>;
-	cookies: Record<string, CookieConfiguration>;
 };
 
 export function GenerateResponse({ responseInput }: GenerateResponseInput): GenerateResponseResult {
-	const { status, cookies = {}, headers = {} } = responseInput;
+	const { status,  headers = {} } = responseInput;
 
 	if (status) {
-		return { code: 200, body: { status, data: responseInput.data }, headers, cookies };
+		return { code: 200, body: { status, data: responseInput.data }, headers };
 	}
 
 	const { error } = responseInput;
@@ -84,6 +78,5 @@ export function GenerateResponse({ responseInput }: GenerateResponseInput): Gene
 		code: error.statusCode ? error.statusCode : statusCode,
 		body: { status, error: { message, details: error.details || {} } },
 		headers,
-		cookies,
 	};
 }
