@@ -4,11 +4,12 @@ import { ToArrayOfValues, generateUUID } from './helper-functions';
 interface SingleFieldFactoryInterface<T = any> {
 	type: AbstractDataTypeConstructor;
 	allowNull: boolean;
+	unique?: boolean;
 	primaryKey?: boolean;
 	foreignKey?: boolean;
 	autoIncrement?: boolean;
 	references?: ReferencesType;
-	defaultValue?: () => T;
+	defaultValue?: (() => T) | T;
 }
 
 interface BasicModelConfigInterface {
@@ -24,11 +25,11 @@ type ReferencesType = {
 };
 
 class FieldFactoryBuilder<T = any> {
-	DefaultValue(defaultValueCallback: () => T) {
+	DefaultValue(defaultValueCallback: (() => T) | T) {
 		this.field.defaultValue = defaultValueCallback;
 		return this;
 	}
-	PrimaryKey({ autoIncrement }: { autoIncrement?: boolean }) {
+	PrimaryKey({ autoIncrement }: { autoIncrement?: boolean } = {}) {
 		this.field.primaryKey = true;
 		if (autoIncrement) this.field.autoIncrement = autoIncrement;
 		return this;
@@ -47,8 +48,18 @@ class FieldFactoryBuilder<T = any> {
 		return new FieldFactoryBuilder<T>(type);
 	}
 
-	AllowNull(allowNull: boolean = true): this {
-		this.field.allowNull = allowNull;
+	AllowNull(): this {
+		this.field.allowNull = true;
+		return this;
+	}
+
+	NotNull(): this {
+		this.field.allowNull = false;
+		return this;
+	}
+
+	Unique(): this {
+		this.field.unique = true;
 		return this;
 	}
 
@@ -66,8 +77,8 @@ export class FieldFactory {
 	static BasicModelConfig({
 		sequelize,
 		tableName,
-		timestamps = true,
-		paranoid = true,
+		timestamps = false,
+		paranoid = false,
 	}: BasicModelConfigInterface): BasicModelConfigInterface {
 		return { sequelize, timestamps, paranoid, tableName };
 	}
@@ -76,9 +87,7 @@ export class FieldFactory {
 		return FieldFactoryBuilder.create<number>(DataTypes.INTEGER).PrimaryKey({ autoIncrement: true });
 	}
 	static UUId() {
-		return FieldFactoryBuilder.create<string>(DataTypes.STRING)
-			.PrimaryKey({})
-			.DefaultValue(generateUUID);
+		return FieldFactoryBuilder.create<string>(DataTypes.STRING).PrimaryKey({}).DefaultValue(generateUUID);
 	}
 
 	static Enum<T extends Record<string, any>>(targetedEnum: T) {

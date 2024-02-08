@@ -1,4 +1,4 @@
-import { Application, configurations } from './src/core';
+import { Application, configurations, loggers } from './src/core';
 
 async function Main() {
 	try {
@@ -7,7 +7,7 @@ async function Main() {
 
 		applicationInstance.listen({ port: configurations.server.port, host: configurations.server.host });
 	} catch (error) {
-		console.error('Error during application startup:', error);
+		loggers.exceptions.error(`Error during application startup: ${error}`);
 		process.exit(1);
 	}
 }

@@ -7,7 +7,8 @@ if (environmentData.error) {
 	throw new Error("Couldn't find .env file");
 }
 
-const parseEnvironmentInteger = (key: string, defaultValue: number) => parseInt(process.env[key] || '', 10) || defaultValue;
+const parseEnvironmentInteger = (key: string, defaultValue: number) =>
+	parseInt(process.env[key] || '', 10) || defaultValue;
 
 const configurations = {
 	server: {
@@ -40,7 +41,9 @@ const configurations = {
 
 	api: {
 		prefix: '/api',
-	}
+	},
+
+	bcrypt: { saltOrRounds: 8 },
 };
 
 export { configurations };

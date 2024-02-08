@@ -58,7 +58,7 @@ export class Application {
 				loggers.application.error('Error starting the server:', error);
 				process.exit(1); // Terminate the process on error
 			} else {
-				loggers.application.child({}).info(`Server listening on: ${address}`);
+				loggers.application.info(`Server listening on: ${address}`);
 			}
 		};
 
