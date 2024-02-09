@@ -18,7 +18,7 @@ export async function BorrowerApiBuilder({
 				const { limit = -1, page = 1 } = query as PaginatedQuery;
 				return {
 					status: true,
-					data: { applications: await bookService.getAll() },
+					data: { applications: await bookService.getAll({ limit, offset: (page - 1) * limit }) },
 				};
 			},
 		},

@@ -10,8 +10,12 @@ export class BookService {
 		return await this.bookRepository.create(createData);
 	}
 
-	async getAll() {
-		return await this.bookRepository.findAll({});
+	async getAll({ limit, offset }: PaginatedServiceMethod = { limit: -1, offset: 0 }) {
+		const options: Record<string, any> = {};
+		if (offset) options.offset = offset;
+		if (limit && limit > -1) options.limit = limit;
+
+		return await this.bookRepository.findAll(options);
 	}
 
 	async getById(id: string) {

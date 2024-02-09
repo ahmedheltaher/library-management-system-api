@@ -35,11 +35,32 @@ export const BooksDefinitions = {
 		required: ['bookId'],
 		additionalProperties: false,
 	},
+	BookISBNInput: {
+		$id: '$BookISBNInput',
+		type: 'object',
+		properties: { ISBN: { type: 'string' } },
+		required: ['ISBN'],
+		additionalProperties: false,
+	},
+	BookTitleInput: {
+		$id: '$BookTitleInput',
+		type: 'object',
+		properties: { title: { type: 'string' } },
+		required: ['title'],
+		additionalProperties: false,
+	},
+	BookAuthorInput: {
+		$id: '$BookAuthorInput',
+		type: 'object',
+		properties: { author: { type: 'string' } },
+		required: ['author'],
+		additionalProperties: false,
+	},
 };
 
 export const BookSchemas = EntitySchema({
 	GetAllBooks: {
-		description: 'Get all books in the system. If limit is -1, retrieve all books.',
+		description: 'Retrieve all books in the system with optional pagination support.',
 		querystring: { $ref: '$PaginatedQuery' },
 		tags: ['Book'],
 		security: [{ apiKey: [] }],
@@ -49,11 +70,38 @@ export const BookSchemas = EntitySchema({
 		}),
 	},
 	GetBook: {
-		description: 'Get details of a single book by its ID.',
+		description: 'Retrieve details of a book by its ID.',
 		params: { $ref: '$BookIdInput' },
 		tags: ['Book'],
 		security: [{ apiKey: [] }],
 		response: GetResponses({ successResponse: { book: { $ref: '$Book' } }, errors: ['401'] }),
+	},
+	GetBookByISBN: {
+		description: 'Retrieve details of a book by its ISBN.',
+		params: { $ref: '$BookISBNInput' },
+		tags: ['Book'],
+		security: [{ apiKey: [] }],
+		response: GetResponses({ successResponse: { book: { $ref: '$Book' } }, errors: ['401'] }),
+	},
+	GetBookByTitle: {
+		description: 'Retrieve details of books by matching or similar title.',
+		params: { $ref: '$BookTitleInput' },
+		tags: ['Book'],
+		security: [{ apiKey: [] }],
+		response: GetResponses({
+			successResponse: { books: { type: 'array', items: { $ref: '$Book' } } },
+			errors: ['401'],
+		}),
+	},
+	GetBookByAuthor: {
+		description: 'Retrieve details of books by matching or similar author.',
+		params: { $ref: '$BookAuthorInput' },
+		tags: ['Book'],
+		security: [{ apiKey: [] }],
+		response: GetResponses({
+			successResponse: { books: { type: 'array', items: { $ref: '$Book' } } },
+			errors: ['401'],
+		}),
 	},
 	AddBook: {
 		description: 'Add a new book to the library.',

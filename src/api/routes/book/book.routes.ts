@@ -18,7 +18,7 @@ export async function BookApiBuilder({
 				const { limit = -1, page = 1 } = query as PaginatedQuery;
 				return {
 					status: true,
-					data: { books: await bookService.getAll() },
+					data: { books: await bookService.getAll({ limit, offset: (page - 1) * limit }) },
 				};
 			},
 		},
@@ -34,6 +34,54 @@ export async function BookApiBuilder({
 					? {
 							status: true,
 							data: { book },
+						}
+					: { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
+			},
+		},
+		{
+			url: '/get-by-ISBN/:ISBN',
+			method: 'GET',
+			schema: BookSchemas.GetBookByISBN,
+			// preHandler: [hooks.tokenRequired],
+			handler: async ({ params }) => {
+				const { ISBN } = params as any;
+				const book = await bookService.getByISBN(ISBN);
+				return book
+					? {
+							status: true,
+							data: { book },
+						}
+					: { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
+			},
+		},
+		{
+			url: '/get-by-title/:title',
+			method: 'GET',
+			schema: BookSchemas.GetBookByTitle,
+			// preHandler: [hooks.tokenRequired],
+			handler: async ({ params }) => {
+				const { title } = params as any;
+				const books = await bookService.getByTitle(title);
+				return books?.length
+					? {
+							status: true,
+							data: { books },
+						}
+					: { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
+			},
+		},
+		{
+			url: '/get-by-author/:author',
+			method: 'GET',
+			schema: BookSchemas.GetBookByAuthor,
+			// preHandler: [hooks.tokenRequired],
+			handler: async ({ params }) => {
+				const { author } = params as any;
+				const books = await bookService.getByAuthor(author);
+				return books?.length
+					? {
+							status: true,
+							data: { books },
 						}
 					: { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
 			},
@@ -90,7 +138,7 @@ export async function BookApiBuilder({
 			method: 'DELETE',
 			schema: BookSchemas.DeleteBook,
 			// preHandler: [hooks.tokenRequired],
-			handler: async ({ params}) => {
+			handler: async ({ params }) => {
 				const { bookId } = params as any;
 				const isDeleted = await bookService.delete(bookId);
 				return isDeleted ? { status: true, data: {} } : { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
