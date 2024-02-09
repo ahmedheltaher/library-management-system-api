@@ -3,6 +3,11 @@ import { GenerateResponse } from '../../core/utils';
 import { HookBuilderInput } from '../../core/utils/routes-manager';
 import { JWTService } from '../../utils';
 
+const typeLookup: Record<string, string> = {
+	'0xFF': 'BORROWER',
+	'0x00': 'ADMIN',
+};
+
 export async function TokenRequiredBuilder({ configurations, services }: HookBuilderInput) {
 	return async (request: FastifyRequest, reply: FastifyReply): Promise<unknown> => {
 		const token = request.headers.authentication;
@@ -16,7 +21,15 @@ export async function TokenRequiredBuilder({ configurations, services }: HookBui
 
 		try {
 			const payload = JWTService.decodeToken(token, configurations.jwt.secret);
-			reply.locals = { ...payload };
+			const { t, UID } = payload as any;
+			const type = typeLookup[t];
+			if (!type) return reply.code(code).send(body);
+			if (type === 'BORROWER') {
+				const borrower = await services.borrowerService.getById(UID);
+				if (!borrower) return reply.code(code).send(body);
+			}
+
+			reply.locals = { ...payload, type };
 		} catch (error) {
 			return reply.code(code).send(body);
 		}

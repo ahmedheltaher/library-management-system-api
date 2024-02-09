@@ -40,9 +40,6 @@ Borrowing.init(
 	},
 	{
 		...FieldFactory.BasicModelConfig({ sequelize: sequelizeConnection, tableName: 'borrowings', timestamps: true }),
-		indexes: [
-			{ unique: true, fields: [{ name: 'bookId' }] },
-			{ unique: true, fields: [{ name: 'borrowerId' }] },
-		],
+		indexes: [{ fields: [{ name: 'bookId' }] }, { fields: [{ name: 'borrowerId' }] }],
 	}
 );

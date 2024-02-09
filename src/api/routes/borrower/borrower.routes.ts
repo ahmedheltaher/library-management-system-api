@@ -37,7 +37,6 @@ export async function BorrowerApiBuilder({ services, hooks }: ApiBuilderInput): 
 			url: '/login',
 			method: 'POST',
 			schema: BorrowerSchemas.Login,
-			preHandler: [hooks.tokenRequired],
 			handler: async ({ body }) => {
 				const { status, token } = await borrowerService.login(body as any);
 				if (!status) {

@@ -13,6 +13,9 @@ export const sequelizeConnection = new Sequelize({
 	benchmark: true,
 	operatorsAliases: {
 		$like: Op.like,
+		$ne: Op.ne,
+		$eq: Op.eq,
+		$lt: Op.lt
 	},
 });
 

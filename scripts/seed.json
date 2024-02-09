@@ -1,0 +1,209 @@
+{
+	"books": [
+		{
+			"title": "To Kill a Mockingbird",
+			"author": "Harper Lee",
+			"ISBN": "9780061120084",
+			"availableQuantity": 10,
+			"shelfLocation": "Fiction"
+		},
+		{
+			"title": "1984",
+			"author": "George Orwell",
+			"ISBN": "9780451524935",
+			"availableQuantity": 8,
+			"shelfLocation": "Science Fiction"
+		},
+		{
+			"title": "Pride and Prejudice",
+			"author": "Jane Austen",
+			"ISBN": "9780141439518",
+			"availableQuantity": 6,
+			"shelfLocation": "Romance"
+		},
+		{
+			"title": "The Great Gatsby",
+			"author": "F. Scott Fitzgerald",
+			"ISBN": "9780743273565",
+			"availableQuantity": 7,
+			"shelfLocation": "Fiction"
+		},
+		{
+			"title": "The Catcher in the Rye",
+			"author": "J.D. Salinger",
+			"ISBN": "9780316769488",
+			"availableQuantity": 5,
+			"shelfLocation": "Fiction"
+		},
+		{
+			"title": "The Hobbit",
+			"author": "J.R.R. Tolkien",
+			"ISBN": "9780547928227",
+			"availableQuantity": 9,
+			"shelfLocation": "Fantasy"
+		},
+		{
+			"title": "Harry Potter and the Sorcerer's Stone",
+			"author": "J.K. Rowling",
+			"ISBN": "9780590353427",
+			"availableQuantity": 12,
+			"shelfLocation": "Fantasy"
+		},
+		{
+			"title": "The Lord of the Rings",
+			"author": "J.R.R. Tolkien",
+			"ISBN": "9780618640157",
+			"availableQuantity": 11,
+			"shelfLocation": "Fantasy"
+		},
+		{
+			"title": "The Diary of a Young Girl",
+			"author": "Anne Frank",
+			"ISBN": "9780553296983",
+			"availableQuantity": 8,
+			"shelfLocation": "Biography"
+		},
+		{
+			"title": "Moby-Dick",
+			"author": "Herman Melville",
+			"ISBN": "9780142437247",
+			"availableQuantity": 6,
+			"shelfLocation": "Fiction"
+		},
+		{
+			"title": "The Chronicles of Narnia",
+			"author": "C.S. Lewis",
+			"ISBN": "9780066238500",
+			"availableQuantity": 9,
+			"shelfLocation": "Fantasy"
+		},
+		{
+			"title": "Frankenstein",
+			"author": "Mary Shelley",
+			"ISBN": "9780486282114",
+			"availableQuantity": 7,
+			"shelfLocation": "Horror"
+		},
+		{
+			"title": "The Picture of Dorian Gray",
+			"author": "Oscar Wilde",
+			"ISBN": "9780141442464",
+			"availableQuantity": 8,
+			"shelfLocation": "Fiction"
+		},
+		{
+			"title": "Brave New World",
+			"author": "Aldous Huxley",
+			"ISBN": "9780060850524",
+			"availableQuantity": 6,
+			"shelfLocation": "Science Fiction"
+		},
+		{
+			"title": "Jane Eyre",
+			"author": "Charlotte Brontë",
+			"ISBN": "9780141441146",
+			"availableQuantity": 7,
+			"shelfLocation": "Romance"
+		},
+		{
+			"title": "The Hunger Games",
+			"author": "Suzanne Collins",
+			"ISBN": "9780439023528",
+			"availableQuantity": 10,
+			"shelfLocation": "Science Fiction"
+		},
+		{
+			"title": "Gone with the Wind",
+			"author": "Margaret Mitchell",
+			"ISBN": "9781416548942",
+			"availableQuantity": 9,
+			"shelfLocation": "Historical Fiction"
+		},
+		{
+			"title": "Anna Karenina",
+			"author": "Leo Tolstoy",
+			"ISBN": "9780143035008",
+			"availableQuantity": 8,
+			"shelfLocation": "Fiction"
+		},
+		{
+			"title": "Wuthering Heights",
+			"author": "Emily Brontë",
+			"ISBN": "9780141439556",
+			"availableQuantity": 7,
+			"shelfLocation": "Romance"
+		},
+		{
+			"title": "ثلاثية غراناطة",
+			"author": "رضوى عاشور",
+			"ISBN": "9770907375",
+			"availableQuantity": 5,
+			"shelfLocation": "روايات عربية"
+		},
+		{
+			"title": "العاصفة",
+			"author": "عبد الرحمن منيف",
+			"ISBN": "9789953754910",
+			"availableQuantity": 8,
+			"shelfLocation": "روايات عربية"
+		},
+		{
+			"title": "الأسود يليق بك",
+			"author": "أحلام مستغانمي",
+			"ISBN": "9953711201",
+			"availableQuantity": 6,
+			"shelfLocation": "روايات عربية"
+		},
+		{
+			"title": "البؤساء",
+			"author": "فيكتور هوجو",
+			"ISBN": "9789953887440",
+			"availableQuantity": 7,
+			"shelfLocation": "روايات ترجمة"
+		},
+		{
+			"title": "على هامش العالم",
+			"author": "محمد حسنين هيكل",
+			"ISBN": "9789774271724",
+			"availableQuantity": 4,
+			"shelfLocation": "سير ذاتية"
+		}
+	],
+	"admins": [
+		{
+			"name": "Ahmed Eltaher",
+			"email": "ahmed@example.com",
+			"password": "ahmed123",
+			"isSuperAdmin": true
+		},
+		{
+			"name": "Mohammed Khalid",
+			"email": "mohammed@example.com",
+			"password": "password123",
+			"isSuperAdmin": false
+		},
+		{
+			"name": "Youssef Mahmoud",
+			"email": "youssef@example.com",
+			"password": "youssef456",
+			"isSuperAdmin": false
+		}
+	],
+	"borrowers": [
+		{
+			"name": "Ahmed Ali",
+			"email": "ahmed.ali@example.com",
+			"password": "password123"
+		},
+		{
+			"name": "Mohammed Khan",
+			"email": "mohammed.khan@example.com",
+			"password": "khan456"
+		},
+		{
+			"name": "Omar Saleh",
+			"email": "omar.saleh@example.com",
+			"password": "saleh789"
+		}
+	]
+}

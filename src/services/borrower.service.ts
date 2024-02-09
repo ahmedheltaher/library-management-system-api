@@ -36,7 +36,7 @@ export class BorrowerService {
 		if (!borrower) return { status: false };
 		if (!borrower.comparePassword(password)) return { status: false };
 		const token = JWTService.generateToken(
-			{ UID: borrower.dataValues.id },
+			{ UID: borrower.dataValues.id, t:'0xFF' },
 			configurations.jwt.secret,
 			configurations.jwt.tokenDuration.short
 		);

@@ -1,15 +1,19 @@
-import { Model, ModelStatic, FindOptions, UpdateOptions, DestroyOptions } from 'sequelize';
+import { Model, ModelStatic, FindOptions, UpdateOptions, DestroyOptions, Transaction, CreateOptions } from 'sequelize';
 import { MakeNullishOptional } from 'sequelize/types/utils';
+import { sequelizeConnection } from '../../server';
 
 type CreationAttributes<M extends Model> = MakeNullishOptional<M['_creationAttributes']>;
 
 interface BaseRepositoryInterface<M extends Model, I extends CreationAttributes<M>> {
 	findAll(options?: FindOptions): Promise<Array<M>>;
 	findOne(options: FindOptions): Promise<M | null>;
-	create(entity: I): Promise<M>;
-	bulkCreate(entities: Array<I>): Promise<Array<M>>;
+	create(entity: I, options?: CreateOptions<M>): Promise<M>;
+	bulkCreate(entities: Array<I>, options?: CreateOptions<M>): Promise<Array<M>>;
 	update(entity: Partial<I>, options?: UpdateOptions<M>): Promise<[affectedCount: number, affectedRows: Array<M>]>;
 	delete(options?: DestroyOptions<M>): Promise<number>;
+	startTransaction(): Promise<Transaction>;
+	commitTransaction(transaction: Transaction): Promise<void>;
+	rollbackTransaction(transaction: Transaction): Promise<void>;
 }
 
 export class BaseRepository<M extends Model, I extends CreationAttributes<M>> implements BaseRepositoryInterface<M, I> {
@@ -19,7 +23,7 @@ export class BaseRepository<M extends Model, I extends CreationAttributes<M>> im
 	 * JavaScript may produce a larger number by 192, and subtracting from it might not affect the last three digits as expected.
 	 */
 	private POSTGRESQL_MAX_BIG_INT = 2 ** 63 - 1000;
-
+	private openTransactions: Transaction[] = [];
 	constructor(private model: ModelStatic<M>) {}
 
 	public async findAll(options?: FindOptions<M>): Promise<Array<M>> {
@@ -38,12 +42,12 @@ export class BaseRepository<M extends Model, I extends CreationAttributes<M>> im
 		return await this.model.findOne(options);
 	}
 
-	public async create(entity: I): Promise<M> {
-		return this.model.create(entity);
+	public async create(entity: I, options?: CreateOptions<M>): Promise<M> {
+		return this.model.create(entity, options);
 	}
 
-	public async bulkCreate(entities: Array<I>): Promise<Array<M>> {
-		return this.model.bulkCreate(entities);
+	public async bulkCreate(entities: Array<I>, options?: CreateOptions<M>): Promise<Array<M>> {
+		return this.model.bulkCreate(entities, options);
 	}
 	public async update(
 		entity: Partial<I>,
@@ -58,5 +62,28 @@ export class BaseRepository<M extends Model, I extends CreationAttributes<M>> im
 		if (options?.limit && options.limit > 0) options.limit = Math.min(options.limit, this.POSTGRESQL_MAX_BIG_INT);
 
 		return await this.model.destroy(options);
+	}
+
+	public async startTransaction(): Promise<Transaction> {
+		const transaction = await sequelizeConnection.transaction();
+		this.openTransactions.push(transaction);
+		return transaction;
+	}
+
+	public async commitTransaction(transaction: Transaction): Promise<void> {
+		await transaction.commit();
+		this.removeTransaction(transaction);
+	}
+
+	public async rollbackTransaction(transaction: Transaction): Promise<void> {
+		await transaction.rollback();
+		this.removeTransaction(transaction);
+	}
+
+	private removeTransaction(transaction: Transaction): void {
+		const index = this.openTransactions.indexOf(transaction);
+		if (index !== -1) {
+			this.openTransactions.splice(index, 1);
+		}
 	}
 }

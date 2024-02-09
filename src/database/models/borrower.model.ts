@@ -3,8 +3,6 @@ import { Model, Optional } from 'sequelize';
 import { FieldFactory, IDates, JSONSerializer } from '../utils';
 import { sequelizeConnection } from '../server';
 import { configurations } from '../../core';
-import { Borrowing } from './borrowing.model';
-import { Book } from './book.model';
 
 interface BorrowerAttributes {
 	id: string;
@@ -52,17 +50,3 @@ Borrower.init(
 	}
 );
 
-Borrower.belongsToMany(Book, {
-	through: Borrowing,
-	foreignKey: 'borrowerId',
-	as: 'books',
-	onDelete: 'cascade',
-	hooks: true,
-});
-Book.belongsToMany(Borrower, {
-	through: Borrowing,
-	foreignKey: 'bookId',
-	hooks: true,
-	onDelete: 'cascade',
-	as: 'borrowers',
-});

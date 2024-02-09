@@ -37,7 +37,7 @@ Book.init(
 		author: FieldFactory.String().NotNull().Build(),
 		ISBN: FieldFactory.String().NotNull().Unique().Build(),
 		availableQuantity: FieldFactory.Integer().NotNull().Build(),
-		shelfLocation: FieldFactory.String().NotNull().Unique().Build(),
+		shelfLocation: FieldFactory.String().NotNull().Build(),
 	},
 	{
 		...FieldFactory.BasicModelConfig({ sequelize: sequelizeConnection, tableName: 'books', timestamps: true }),
