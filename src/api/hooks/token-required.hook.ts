@@ -5,7 +5,7 @@ import { JWTService } from '../../utils';
 
 const typeLookup: Record<string, string> = {
 	'0xFF': 'BORROWER',
-	'0x00': 'ADMIN',
+	'0x00': 'LIBRARIAN',
 };
 
 export async function TokenRequiredBuilder({ configurations, services }: HookBuilderInput) {

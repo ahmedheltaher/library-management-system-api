@@ -1,6 +1,5 @@
 import { OpenAPIV2 } from 'openapi-types';
 
-
 const GlobalDefinitions: OpenAPIV2.DefinitionsObject = {
 	PaginatedQuery: {
 		$id: '$PaginatedQuery',
@@ -15,7 +14,4 @@ const GlobalDefinitions: OpenAPIV2.DefinitionsObject = {
 
 export const definitions: OpenAPIV2.DefinitionsObject = {
 	...GlobalDefinitions,
-
 };
-
-

@@ -1,6 +1,6 @@
 import { Model, Optional } from 'sequelize';
-import { FieldFactory, IDates, JSONSerializer } from '../utils';
 import { sequelizeConnection } from '../server';
+import { FieldFactory, IDates, JSONSerializer } from '../utils';
 
 interface BookAttributes {
 	id: string;
@@ -21,7 +21,6 @@ export class Book extends Model<BookAttributes, BookInput> implements BookAttrib
 	public ISBN!: string;
 	public availableQuantity!: number;
 	public shelfLocation!: string;
-
 
 	toJSON() {
 		return this.jsonSerializer.toJSON(this.dataValues, ['createdAt', 'updatedAt']);

@@ -8,7 +8,7 @@ export async function BorrowerApiBuilder({ services, hooks }: ApiBuilderInput): 
 			url: '/',
 			method: 'GET',
 			schema: BorrowerSchemas.GetAllBorrowers,
-			preHandler: [hooks.tokenRequired, hooks.adminsOnly],
+			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
 			handler: async ({ query }) => {
 				const { limit = -1, page = 1 } = query as PaginatedQuery;
 				return {
@@ -98,7 +98,7 @@ export async function BorrowerApiBuilder({ services, hooks }: ApiBuilderInput): 
 			preHandler: [hooks.tokenRequired],
 			handler: async ({ body, locals }) => {
 				const { UID } = locals;
-				const {  currentPassword } = body as any;
+				const { currentPassword } = body as any;
 				const { status } = await borrowerService.deleteAccount({ id: UID, currentPassword });
 				if (!status) {
 					return {

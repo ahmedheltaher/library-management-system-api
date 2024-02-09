@@ -15,7 +15,7 @@ export const sequelizeConnection = new Sequelize({
 		$like: Op.like,
 		$ne: Op.ne,
 		$eq: Op.eq,
-		$lt: Op.lt
+		$lt: Op.lt,
 	},
 });
 

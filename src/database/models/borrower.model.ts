@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import { Model, Optional } from 'sequelize';
-import { FieldFactory, IDates, JSONSerializer } from '../utils';
-import { sequelizeConnection } from '../server';
 import { configurations } from '../../core';
+import { sequelizeConnection } from '../server';
+import { FieldFactory, IDates, JSONSerializer } from '../utils';
 
 interface BorrowerAttributes {
 	id: string;
@@ -49,4 +49,3 @@ Borrower.init(
 		indexes: [{ unique: true, fields: [{ name: 'id' }] }],
 	}
 );
-

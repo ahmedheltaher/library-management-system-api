@@ -4,10 +4,8 @@ export const ERROR_RESPONSE_MESSAGES = [
 	'INVALID_INPUT',
 	'ENTITY_NOT_FOUND',
 	'CONFLICT',
-	'UNAUTHORIZED'
+	'UNAUTHORIZED',
 ] as const;
-
-
 
 export type ErrorResponseMessages = (typeof ERROR_RESPONSE_MESSAGES)[number];
 
@@ -70,7 +68,7 @@ export type GenerateResponseResult = {
 };
 
 export function GenerateResponse({ responseInput }: GenerateResponseInput): GenerateResponseResult {
-	const { status,  headers = {} } = responseInput;
+	const { status, headers = {} } = responseInput;
 
 	if (status) {
 		return { code: 200, body: { status, data: responseInput.data }, headers };

@@ -1,5 +1,4 @@
 import { ApiBuilderInput, ApiBuilderOutput } from '../../../core/utils/routes-manager';
-
 import { BookSchemas } from './book.validation';
 
 export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiBuilderOutput> {
@@ -22,7 +21,7 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			url: '/:bookId',
 			method: 'GET',
 			schema: BookSchemas.GetBook,
-			// preHandler: [hooks.tokenRequired],
+			preHandler: [hooks.tokenRequired],
 			handler: async ({ params }) => {
 				const { bookId } = params as any;
 				const book = await bookService.getById(bookId);
@@ -36,7 +35,7 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			url: '/get-by-ISBN/:ISBN',
 			method: 'GET',
 			schema: BookSchemas.GetBookByISBN,
-			// preHandler: [hooks.tokenRequired],
+			preHandler: [hooks.tokenRequired],
 			handler: async ({ params }) => {
 				const { ISBN } = params as any;
 				const book = await bookService.getByISBN(ISBN);
@@ -50,7 +49,7 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			url: '/get-by-title/:title',
 			method: 'GET',
 			schema: BookSchemas.GetBookByTitle,
-			// preHandler: [hooks.tokenRequired],
+			preHandler: [hooks.tokenRequired],
 			handler: async ({ params }) => {
 				const { title } = params as any;
 				const books = await bookService.getByTitle(title);
@@ -64,7 +63,7 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			url: '/get-by-author/:author',
 			method: 'GET',
 			schema: BookSchemas.GetBookByAuthor,
-			// preHandler: [hooks.tokenRequired],
+			preHandler: [hooks.tokenRequired],
 			handler: async ({ params }) => {
 				const { author } = params as any;
 				const books = await bookService.getByAuthor(author);
@@ -78,7 +77,7 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			url: '/',
 			method: 'POST',
 			schema: BookSchemas.AddBook,
-			// preHandler: [hooks.tokenRequired],
+			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
 			handler: async ({ body }) => {
 				try {
 					const book = await bookService.add(body as any);
@@ -100,7 +99,7 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			url: '/:bookId',
 			method: 'PUT',
 			schema: BookSchemas.UpdateBook,
-			// preHandler: [hooks.tokenRequired],
+			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
 			handler: async ({ params, body }) => {
 				const { bookId } = params as any;
 
@@ -115,7 +114,7 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			url: '/:bookId',
 			method: 'DELETE',
 			schema: BookSchemas.DeleteBook,
-			// preHandler: [hooks.tokenRequired],
+			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
 			handler: async ({ params }) => {
 				const { bookId } = params as any;
 				const isDeleted = await bookService.delete(bookId);

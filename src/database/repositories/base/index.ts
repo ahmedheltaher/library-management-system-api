@@ -1,4 +1,4 @@
-import { Model, ModelStatic, FindOptions, UpdateOptions, DestroyOptions, Transaction, CreateOptions } from 'sequelize';
+import { CreateOptions, DestroyOptions, FindOptions, Model, ModelStatic, Transaction, UpdateOptions } from 'sequelize';
 import { MakeNullishOptional } from 'sequelize/types/utils';
 import { sequelizeConnection } from '../../server';
 

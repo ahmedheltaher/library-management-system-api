@@ -1,13 +1,13 @@
-import fastify, { FastifyInstance } from 'fastify';
-import { syncDatabase } from '../database/server';
-import { configurations, loggers, swaggerOptions, swaggerUIOptions, errorHandler } from './utils';
-import { RoutesManager } from './utils/routes-manager';
-import { GetServices } from '../services';
-import { GetHooks } from '../api/hooks';
-import { ApiDefinitions, routes } from '../api';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUI from '@fastify/swagger-ui';
+import fastify, { FastifyInstance } from 'fastify';
 import { OpenAPIV2 } from 'openapi-types';
+import { ApiDefinitions, routes } from '../api';
+import { GetHooks } from '../api/hooks';
+import { syncDatabase } from '../database/server';
+import { GetServices } from '../services';
+import { configurations, errorHandler, loggers, swaggerOptions, swaggerUIOptions } from './utils';
+import { RoutesManager } from './utils/routes-manager';
 import { definitions } from './validations';
 
 /**

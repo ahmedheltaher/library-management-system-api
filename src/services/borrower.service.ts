@@ -1,5 +1,5 @@
 import { configurations } from '../core';
-import { BorrowerRepository, BorrowerInput } from '../database';
+import { BorrowerInput, BorrowerRepository } from '../database';
 import { JWTService } from '../utils';
 
 type TLoginInput = {
@@ -36,7 +36,7 @@ export class BorrowerService {
 		if (!borrower) return { status: false };
 		if (!borrower.comparePassword(password)) return { status: false };
 		const token = JWTService.generateToken(
-			{ UID: borrower.dataValues.id, t:'0xFF' },
+			{ UID: borrower.dataValues.id, t: '0xFF' },
 			configurations.jwt.secret,
 			configurations.jwt.tokenDuration.short
 		);

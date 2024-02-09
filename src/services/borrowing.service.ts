@@ -1,6 +1,6 @@
-import { BorrowingRepository, BookRepository } from '../database';
-import { Book, Borrower } from '../database/models';
 import { loggers } from '../core';
+import { BookRepository, BorrowingRepository } from '../database';
+import { Book, Borrower } from '../database/models';
 
 type TReturnBook = {
 	bookId: string;

@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import { Algorithm } from 'jsonwebtoken';
 
 const environmentData = dotenv.config();
 
@@ -28,7 +27,6 @@ const configurations = {
 
 	jwt: {
 		secret: process.env.JWT_SECRET || '123',
-		algorithm: (process.env.JWT_ALGO || 'HS256') as Algorithm,
 		tokenDuration: {
 			long: 60 * 60 * 24 * 30, // 30 Days Validity
 			short: 60 * 60 * 24, // 1 Day Validity
@@ -41,14 +39,14 @@ const configurations = {
 
 	api: {
 		prefix: '/api',
-		version:'/v1'
+		version: '/v1',
 	},
 
 	bcrypt: { saltOrRounds: 8 },
 
 	isDevelopmentEnvironment() {
-		return (process.env.NODE_ENV || "").toUpperCase() === 'DEVELOPMENT';
-	}
+		return (process.env.NODE_ENV || '').toUpperCase() === 'DEVELOPMENT';
+	},
 };
 
 export { configurations };

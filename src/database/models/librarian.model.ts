@@ -1,26 +1,26 @@
 import bcrypt from 'bcrypt';
 import { Model, Optional } from 'sequelize';
-import { FieldFactory, IDates, JSONSerializer } from '../utils';
-import { sequelizeConnection } from '../server';
 import { configurations } from '../../core';
+import { sequelizeConnection } from '../server';
+import { FieldFactory, IDates, JSONSerializer } from '../utils';
 
-interface AdminAttributes {
+interface LibrarianAttributes {
 	id: string;
 	name: string;
 	password: string;
 	email: string;
-	isSuperAdmin: boolean;
+	isChefLibrarian: boolean;
 }
-export interface AdminInput
-	extends Optional<AdminAttributes, 'id'>,
+export interface LibrarianInput
+	extends Optional<LibrarianAttributes, 'id'>,
 		Optional<IDates, 'createdAt' | 'deletedAt' | 'updatedAt'> {}
 
-export class Admin extends Model<AdminAttributes, AdminInput> implements AdminAttributes {
+export class Librarian extends Model<LibrarianAttributes, LibrarianInput> implements LibrarianAttributes {
 	public id!: string;
 	public name!: string;
 	public password!: string;
 	public email!: string;
-	public isSuperAdmin!: boolean;
+	public isChefLibrarian!: boolean;
 
 	comparePassword(password: string): boolean {
 		return bcrypt.compareSync(password, this.dataValues.password);
@@ -30,10 +30,10 @@ export class Admin extends Model<AdminAttributes, AdminInput> implements AdminAt
 		return this.jsonSerializer.toJSON(this.dataValues, ['createdAt', 'updatedAt']);
 	}
 
-	private jsonSerializer = new JSONSerializer<AdminAttributes>();
+	private jsonSerializer = new JSONSerializer<LibrarianAttributes>();
 }
 
-Admin.init(
+Librarian.init(
 	{
 		id: FieldFactory.UUId().Build(),
 		name: FieldFactory.String().NotNull().Build(),
@@ -44,10 +44,10 @@ Admin.init(
 				this.setDataValue('password', bcrypt.hashSync(rowPassword, configurations.bcrypt.saltOrRounds));
 			},
 		},
-		isSuperAdmin: FieldFactory.Boolean().DefaultValue(false).Build(),
+		isChefLibrarian: FieldFactory.Boolean().DefaultValue(false).Build(),
 	},
 	{
-		...FieldFactory.BasicModelConfig({ sequelize: sequelizeConnection, tableName: 'admins', timestamps: true }),
+		...FieldFactory.BasicModelConfig({ sequelize: sequelizeConnection, tableName: 'librarians', timestamps: true }),
 		indexes: [{ unique: true, fields: [{ name: 'id' }] }],
 	}
 );

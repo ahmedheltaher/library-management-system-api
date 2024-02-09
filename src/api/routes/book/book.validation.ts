@@ -60,7 +60,9 @@ export const BooksDefinitions = {
 
 export const BookSchemas = EntitySchema({
 	GetAllBooks: {
-		description: 'Retrieve all books in the system with optional pagination support.',
+		summary: 'Retrieve all books with optional pagination',
+		description:
+			'This endpoint retrieves a list of all books available in the library system. Pagination support is provided for managing large collections of books.',
 		querystring: { $ref: '$PaginatedQuery' },
 		tags: ['Book'],
 		security: [{ apiKey: [] }],
@@ -70,21 +72,27 @@ export const BookSchemas = EntitySchema({
 		}),
 	},
 	GetBook: {
-		description: 'Retrieve details of a book by its ID.',
+		summary: 'Retrieve book details by ID',
+		description:
+			'This endpoint retrieves detailed information about a specific book in the library system based on its unique identifier.',
 		params: { $ref: '$BookIdInput' },
 		tags: ['Book'],
 		security: [{ apiKey: [] }],
 		response: GetResponses({ successResponse: { book: { $ref: '$Book' } }, errors: ['401'] }),
 	},
 	GetBookByISBN: {
-		description: 'Retrieve details of a book by its ISBN.',
+		summary: 'Retrieve book details by ISBN',
+		description:
+			'This endpoint fetches detailed information about a book in the library system using its International Standard Book Number (ISBN).',
 		params: { $ref: '$BookISBNInput' },
 		tags: ['Book'],
 		security: [{ apiKey: [] }],
 		response: GetResponses({ successResponse: { book: { $ref: '$Book' } }, errors: ['401'] }),
 	},
 	GetBookByTitle: {
-		description: 'Retrieve details of books by matching or similar title.',
+		summary: 'Retrieve book details by title',
+		description:
+			'This endpoint retrieves detailed information about books in the library system by matching or similar titles.',
 		params: { $ref: '$BookTitleInput' },
 		tags: ['Book'],
 		security: [{ apiKey: [] }],
@@ -94,7 +102,9 @@ export const BookSchemas = EntitySchema({
 		}),
 	},
 	GetBookByAuthor: {
-		description: 'Retrieve details of books by matching or similar author.',
+		summary: 'Retrieve book details by author',
+		description:
+			'This endpoint retrieves detailed information about books in the library system by matching or similar author names.',
 		params: { $ref: '$BookAuthorInput' },
 		tags: ['Book'],
 		security: [{ apiKey: [] }],
@@ -104,14 +114,18 @@ export const BookSchemas = EntitySchema({
 		}),
 	},
 	AddBook: {
-		description: 'Add a new book to the library.',
+		summary: 'Add a new book to the library',
+		description:
+			'`**Only For Librarian**`  This endpoint allows librarians to add a new book to the library system, providing all necessary details including title, author, ISBN, available quantity, and shelf location.',
 		tags: ['Book'],
 		body: { $ref: '$BookCreate' },
 		security: [{ apiKey: [] }],
 		response: GetResponses({ successResponse: { book: { $ref: '$Book' } }, errors: ['401'] }),
 	},
 	UpdateBook: {
-		description: 'Update details of a book by its ID.',
+		summary: 'Update book details by ID',
+		description:
+			'`**Only For Librarian**`  This endpoint enables librarians to update the details of a book in the library system based on its unique identifier.',
 		tags: ['Book'],
 		params: { $ref: '$BookIdInput' },
 		body: { $ref: '$BookUpdate' },
@@ -119,10 +133,12 @@ export const BookSchemas = EntitySchema({
 		response: GetResponses({ successResponse: { book: { $ref: '$Book' } }, errors: ['401'] }),
 	},
 	DeleteBook: {
-		description: 'Delete a book by its ID.',
+		summary: 'Delete a book by ID',
+		description:
+			'`**Only For Librarian**` This endpoint allows librarians to permanently remove a book from the library system based on its unique identifier.',
 		params: { $ref: '$BookIdInput' },
 		tags: ['Book'],
 		security: [{ apiKey: [] }],
-		response: GetResponses({ successResponse: {}, errors: ['401'] }),
+		response: GetResponses({ successResponse: { message: { type: 'string' } }, errors: ['401'] }),
 	},
 });

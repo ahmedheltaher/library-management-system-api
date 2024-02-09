@@ -1,10 +1,5 @@
 import { EntitySchema, GetResponses } from '../../../core/validations/helpers';
 
-const borrowingProperties = {
-	name: { type: 'string', minLength: 3, maxLength: 100 },
-	email: { type: 'string', minLength: 3, maxLength: 100 },
-};
-
 export const BorrowingDefinitions = {
 	Borrowing: {
 		$id: '$Borrowing',
@@ -79,7 +74,9 @@ export const BorrowingDefinitions = {
 
 export const BorrowingSchemas = EntitySchema({
 	GetAllBorrowings: {
-		description: 'Retrieve all Borrowings in the system with optional pagination support.',
+		summary: 'Retrieve all borrowings with optional pagination',
+		description:
+			'`**Only For Librarian**` This endpoint retrieves a list of all borrowings in the library system. Pagination support is provided for managing large collections of borrowings.',
 		querystring: { $ref: '$PaginatedQuery' },
 		tags: ['Borrowing'],
 		security: [{ apiKey: [] }],
@@ -88,9 +85,10 @@ export const BorrowingSchemas = EntitySchema({
 			errors: ['401'],
 		}),
 	},
-
 	BorrowABook: {
-		description: 'Borrow a book from the lib',
+		summary: 'Borrow a book from the library',
+		description:
+			'This endpoint allows users to borrow a book from the library by providing the book ID and the due date for return.',
 		tags: ['Borrowing'],
 		security: [{ apiKey: [] }],
 		body: { $ref: '$BorrowingCreate' },
@@ -100,7 +98,8 @@ export const BorrowingSchemas = EntitySchema({
 		}),
 	},
 	ReturnBook: {
-		description: 'Return a borrowed book to the lib',
+		summary: 'Return a borrowed book to the library',
+		description: 'This endpoint allows users to return a borrowed book to the library by providing the book ID.',
 		tags: ['Borrowing'],
 		security: [{ apiKey: [] }],
 		body: { $ref: '$BorrowingReturn' },
@@ -109,9 +108,10 @@ export const BorrowingSchemas = EntitySchema({
 			errors: ['401'],
 		}),
 	},
-
 	MyBorrowings: {
-		description: 'Retrieve all Borrowings by the authenticated user with optional pagination support.',
+		summary: 'Retrieve all borrowings by the authenticated user with optional pagination',
+		description:
+			'This endpoint retrieves a list of all borrowings made by the authenticated user. Pagination support is provided for managing large collections of borrowings.',
 		tags: ['Borrowing'],
 		querystring: { $ref: '$PaginatedQuery' },
 		security: [{ apiKey: [] }],
@@ -120,9 +120,10 @@ export const BorrowingSchemas = EntitySchema({
 			errors: ['401'],
 		}),
 	},
-
 	GetOverDueBorrowings: {
-		description: 'Retrieve all Borrowings in the system that are over due with optional pagination support.',
+		summary: 'Retrieve all overdue borrowings in the system with optional pagination',
+		description:
+			'`**Only For Librarian**` This endpoint retrieves a list of all borrowings that are overdue in the library system. Pagination support is provided for managing large collections of overdue borrowings.',
 		querystring: { $ref: '$PaginatedQuery' },
 		tags: ['Borrowing'],
 		security: [{ apiKey: [] }],
@@ -131,9 +132,10 @@ export const BorrowingSchemas = EntitySchema({
 			errors: ['401'],
 		}),
 	},
-
 	GetMyOverDueBorrowings: {
-		description: 'Retrieve all Borrowings by the authenticated user that are over due with optional pagination support.',
+		summary: 'Retrieve all overdue borrowings by the authenticated user with optional pagination',
+		description:
+			'This endpoint retrieves a list of all borrowings that are overdue and made by the authenticated user. Pagination support is provided for managing large collections of overdue borrowings.',
 		querystring: { $ref: '$PaginatedQuery' },
 		tags: ['Borrowing'],
 		security: [{ apiKey: [] }],

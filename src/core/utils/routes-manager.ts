@@ -1,6 +1,5 @@
-import { FastifyReply, FastifySchema, HTTPMethods, preHandlerAsyncHookHandler } from 'fastify';
+import { FastifyReply, FastifyRequest, FastifySchema, HTTPMethods, preHandlerAsyncHookHandler } from 'fastify';
 import { GenerateResponse, HandlerResult, configurations, stripSlashes } from '.';
-import { FastifyRequest } from 'fastify';
 
 // TODO: Make it a better typed
 export type RequestParts = {

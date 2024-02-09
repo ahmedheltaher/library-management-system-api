@@ -8,7 +8,7 @@ export async function BorrowingApiBuilder({ services, hooks }: ApiBuilderInput):
 			url: '/',
 			method: 'GET',
 			schema: BorrowingSchemas.GetAllBorrowings,
-			preHandler: [hooks.tokenRequired, hooks.adminsOnly],
+			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
 			handler: async ({ query }) => {
 				const { limit = -1, page = 1 } = query as PaginatedQuery;
 				return {
@@ -62,7 +62,7 @@ export async function BorrowingApiBuilder({ services, hooks }: ApiBuilderInput):
 			url: '/over-due-borrowings',
 			method: 'GET',
 			schema: BorrowingSchemas.GetOverDueBorrowings,
-			preHandler: [hooks.tokenRequired],
+			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
 			handler: async ({}) => {
 				const borrowings = await borrowingService.getOverDueBorrowings();
 				return { status: true, data: { borrowings } };

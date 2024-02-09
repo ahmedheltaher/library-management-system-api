@@ -1,2 +1,3 @@
-export * from './book.routes'
-export {BookSchemas} from './book.validation'
+export * from './book.routes';
+export { BookSchemas, BooksDefinitions } from './book.validation';
+

@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'node:path';
-import { AdminRepository, BookRepository, BorrowerRepository, syncDatabase } from '../src/database';
+import { BookRepository, BorrowerRepository, LibrarianRepository, syncDatabase } from '../src/database';
 
 /**
  * Creates folder structure at the specified path.
@@ -23,14 +23,14 @@ async function createFolderStructure(folderPath: string): Promise<void> {
 async function seed(): Promise<void> {
 	const filePath = '/seed.json';
 	const bookRepository = new BookRepository();
-	const adminRepository = new AdminRepository();
+	const librarianRepository = new LibrarianRepository();
 	const borrowerRepository = new BorrowerRepository();
 
 	try {
 		await syncDatabase();
 
 		// Check if seeding is necessary
-		const alreadySeeded = (await adminRepository.findAll()).length > 0;
+		const alreadySeeded = (await librarianRepository.findAll()).length > 0;
 		if (alreadySeeded) {
 			console.info('The database is already seeded.');
 			return;
@@ -38,11 +38,11 @@ async function seed(): Promise<void> {
 
 		// Read data from JSON file
 		const data = await fs.readFile(path.join(__dirname, filePath), 'utf8');
-		const { books, admins, borrowers } = JSON.parse(data);
+		const { books, librarians, borrowers } = JSON.parse(data);
 
-		// Seed database with admin, book, and borrower data concurrently
+		// Seed database with librarians, book, and borrower data concurrently
 		await Promise.all([
-			adminRepository.bulkCreate(admins),
+			librarianRepository.bulkCreate(librarians),
 			bookRepository.bulkCreate(books),
 			borrowerRepository.bulkCreate(borrowers),
 		]);

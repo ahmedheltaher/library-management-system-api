@@ -75,8 +75,6 @@ export function removeDuplicateObjectsForArray(arr: Array<any>, key: string): Ar
 	return [...new Map(arr.map((item) => [item[key], item])).values()];
 }
 
-
-
 /**
  * Generates a UUID (V4).
  *

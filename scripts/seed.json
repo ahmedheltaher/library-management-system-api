@@ -169,24 +169,24 @@
 			"shelfLocation": "سير ذاتية"
 		}
 	],
-	"admins": [
+	"librarians": [
 		{
 			"name": "Ahmed Eltaher",
 			"email": "ahmed@example.com",
 			"password": "ahmed123",
-			"isSuperAdmin": true
+			"isChefLibrarian": true
 		},
 		{
 			"name": "Mohammed Khalid",
 			"email": "mohammed@example.com",
 			"password": "password123",
-			"isSuperAdmin": false
+			"isChefLibrarian": false
 		},
 		{
 			"name": "Youssef Mahmoud",
 			"email": "youssef@example.com",
 			"password": "youssef456",
-			"isSuperAdmin": false
+			"isChefLibrarian": false
 		}
 	],
 	"borrowers": [

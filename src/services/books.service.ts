@@ -1,4 +1,4 @@
-import { BookRepository, BookInput, BorrowingRepository } from '../database';
+import { BookInput, BookRepository, BorrowingRepository } from '../database';
 
 export class BookService {
 	constructor(

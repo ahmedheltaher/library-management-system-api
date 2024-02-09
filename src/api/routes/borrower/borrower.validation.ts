@@ -69,7 +69,9 @@ export const BorrowerDefinitions = {
 
 export const BorrowerSchemas = EntitySchema({
 	GetAllBorrowers: {
-		description: 'Retrieve all Borrowers in the system with optional pagination support.',
+		summary: 'Retrieve all borrowers with optional pagination',
+		description:
+			'`**Only For Librarian**` This endpoint retrieves a list of all registered borrowers in the system. Pagination support is available for managing large datasets.',
 		querystring: { $ref: '$PaginatedQuery' },
 		tags: ['Borrower'],
 		security: [{ apiKey: [] }],
@@ -79,37 +81,45 @@ export const BorrowerSchemas = EntitySchema({
 		}),
 	},
 	Register: {
-		description: 'Register Borrower in the system',
+		summary: 'Register a new borrower account',
+		description:
+			'This endpoint allows a new user to register as a borrower in the system. Upon successful registration, the user gains access to the borrowing functionalities.',
 		tags: ['Borrower'],
 		body: { $ref: '$BorrowerCreate' },
 		security: [{ apiKey: [] }],
 		response: GetResponses({ successResponse: { message: { type: 'string' } }, errors: ['401'] }),
 	},
-
 	Login: {
-		description: 'Login to Access the functionally of the system',
+		summary: 'Login to access the system functionalities',
+		description:
+			'This endpoint facilitates the login process for registered borrowers. Upon successful login, the system provides an authentication token for accessing the functionalities.',
 		tags: ['Borrower'],
 		body: { $ref: '$BorrowerLogin' },
 		security: [{ apiKey: [] }],
 		response: GetResponses({ successResponse: { token: { type: 'string' } }, errors: ['401'] }),
 	},
 	ChangeEmail: {
-		description: 'Change Borrower Email',
+		summary: 'Change borrower email address',
+		description:
+			'This endpoint allows a borrower to change their registered email address. The current password must be provided for authentication and security purposes.',
 		tags: ['Borrower'],
 		body: { $ref: '$BorrowerChangeEmail' },
 		security: [{ apiKey: [] }],
 		response: GetResponses({ successResponse: { message: { type: 'string' } }, errors: ['401'] }),
 	},
 	ChangePassword: {
-		description: 'Change Borrower Password',
+		summary: 'Change borrower account password',
+		description:
+			"This endpoint enables a borrower to update their account password. The current password is required for authentication, and the new password must meet the system's security criteria.",
 		tags: ['Borrower'],
 		body: { $ref: '$BorrowerChangePassword' },
 		security: [{ apiKey: [] }],
 		response: GetResponses({ successResponse: { message: { type: 'string' } }, errors: ['401'] }),
 	},
-
 	DeleteAccount: {
-		description: 'Delete Borrower Account',
+		summary: 'Delete borrower account',
+		description:
+			"This endpoint permanently deletes a borrower's account from the system. To proceed, the borrower must provide their current password for authentication.",
 		tags: ['Borrower'],
 		body: { $ref: '$DeleteBorrowerAccount' },
 		security: [{ apiKey: [] }],

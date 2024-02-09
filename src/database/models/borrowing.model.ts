@@ -1,6 +1,6 @@
 import { Model, Optional } from 'sequelize';
-import { FieldFactory, IDates, JSONSerializer } from '../utils';
 import { sequelizeConnection } from '../server';
+import { FieldFactory, IDates, JSONSerializer } from '../utils';
 
 interface BorrowingAttributes {
 	bookId: string;
