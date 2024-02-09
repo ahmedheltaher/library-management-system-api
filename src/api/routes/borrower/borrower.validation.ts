@@ -3,15 +3,112 @@ import { EntitySchema, GetResponses } from '../../../core/validations/helpers';
 // TODO: Make More Clean
 const tags = ['Borrower'];
 
+const borrowerProperties = {
+	name: { type: 'string', minLength: 3, maxLength: 100 },
+	email: { type: 'string', minLength: 3, maxLength: 100 },
+};
+
+export const BorrowerDefinitions = {
+	Borrower: {
+		$id: '$Borrower',
+		type: 'object',
+		properties: { id: { type: 'string', format: 'uuid' }, ...borrowerProperties },
+		additionalProperties: false,
+	},
+	BorrowerCreate: {
+		$id: '$BorrowerCreate',
+		type: 'object',
+		properties: { ...borrowerProperties, password: { type: 'string', minLength: 3, maxLength: 100 } },
+		required: ['name', 'email', 'password'],
+		additionalProperties: false,
+	},
+	BorrowerLogin: {
+		$id: '$BorrowerLogin',
+		type: 'object',
+		properties: {
+			email: { type: 'string', minLength: 3, maxLength: 100 },
+			password: { type: 'string', minLength: 3, maxLength: 100 },
+		},
+		required: ['email', 'password'],
+		additionalProperties: false,
+	},
+	BorrowerChangeEmail: {
+		$id: '$BorrowerChangeEmail',
+		type: 'object',
+		properties: {
+			currentPassword: { type: 'string', minLength: 3, maxLength: 100 },
+			newEmail: { type: 'string', minLength: 3, maxLength: 100 },
+		},
+		required: ['newEmail', 'currentPassword'],
+		additionalProperties: false,
+	},
+	BorrowerChangePassword: {
+		$id: '$BorrowerChangePassword',
+		type: 'object',
+		properties: {
+			currentPassword: { type: 'string', minLength: 3, maxLength: 100 },
+			newPassword: { type: 'string', minLength: 3, maxLength: 100 },
+		},
+		required: ['newPassword', 'currentPassword'],
+		additionalProperties: false,
+	},
+	DeleteBorrowerAccount: {
+		$id: '$DeleteBorrowerAccount',
+		type: 'object',
+		properties: {
+			currentPassword: { type: 'string', minLength: 3, maxLength: 100 },
+		},
+		required: ['currentPassword'],
+		additionalProperties: false,
+	},
+};
+
 export const BorrowerSchemas = EntitySchema({
-	Register: {
-		description: 'Register Borrower in the system',
+	GetAllBorrowers: {
+		description: 'Retrieve all Borrowers in the system with optional pagination support.',
 		querystring: { $ref: '$PaginatedQuery' },
-		tags,
-		// security: [{ apiKey: [] }],
+		tags: ['Borrower'],
+		security: [{ apiKey: [] }],
 		response: GetResponses({
-			successResponse: { applications: { type: 'array', items: {type:'string'} } },
+			successResponse: { borrowers: { type: 'array', items: { $ref: '$Borrower' } } },
 			errors: ['401'],
 		}),
+	},
+	Register: {
+		description: 'Register Borrower in the system',
+		tags: ['Borrower'],
+		body: { $ref: '$BorrowerCreate' },
+		security: [{ apiKey: [] }],
+		response: GetResponses({ successResponse: { message: { type: 'string' } }, errors: ['401'] }),
+	},
+
+	Login: {
+		description: 'Login to Access the functionally of the system',
+		tags: ['Borrower'],
+		body: { $ref: '$BorrowerLogin' },
+		security: [{ apiKey: [] }],
+		response: GetResponses({ successResponse: { token: { type: 'string' } }, errors: ['401'] }),
+	},
+	ChangeEmail: {
+		description: 'Change Borrower Email',
+		tags: ['Borrower'],
+		body: { $ref: '$BorrowerChangeEmail' },
+		security: [{ apiKey: [] }],
+		response: GetResponses({ successResponse: { message: { type: 'string' } }, errors: ['401'] }),
+	},
+	ChangePassword: {
+		description: 'Change Borrower Password',
+		tags: ['Borrower'],
+		body: { $ref: '$BorrowerChangePassword' },
+		security: [{ apiKey: [] }],
+		response: GetResponses({ successResponse: { message: { type: 'string' } }, errors: ['401'] }),
+	},
+
+	DeleteAccount: {
+		description: 'Delete Borrower Account',
+		tags: ['Borrower'],
+		body: { $ref: '$DeleteBorrowerAccount' },
+		security: [{ apiKey: [] }],
+		response: GetResponses({ successResponse: { message: { type: 'string' } }, errors: ['401'] }),
 	},
 });

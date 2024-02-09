@@ -1,11 +1,12 @@
-import { configurations } from '../core';
-import { BookRepository, BorrowingRepository } from '../database';
+import { BookRepository, BorrowerRepository, BorrowingRepository } from '../database';
 import { BookService } from './books.service';
+import { BorrowerService } from './borrower.service';
 
-// TODO: Septate Type
-export async function GetServices(config: typeof configurations) {
+export async function GetServices() {
 	const bookService = new BookService(new BookRepository(), new BorrowingRepository());
+	const borrowerService = new BorrowerService(new BorrowerRepository());
 
-	return { bookService } as const;
+	return { bookService, borrowerService } as const;
 }
-export type AvailableServices = Awaited<ReturnType<typeof GetServices>>;
+
+

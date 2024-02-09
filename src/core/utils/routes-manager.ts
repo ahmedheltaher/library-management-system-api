@@ -1,8 +1,6 @@
 import { FastifyReply, FastifySchema, HTTPMethods, preHandlerAsyncHookHandler } from 'fastify';
 import { GenerateResponse, HandlerResult, configurations, stripSlashes } from '.';
 import { FastifyRequest } from 'fastify';
-import { AvailableHooks } from '../../api/hooks';
-import { AvailableServices } from '../../services';
 
 // TODO: Make it a better typed
 export type RequestParts = {
@@ -10,6 +8,7 @@ export type RequestParts = {
 	headers: FastifyRequest['headers'];
 	query: FastifyRequest['query'];
 	params: FastifyRequest['params'];
+	locals: Record<string, any>;
 };
 
 export type Configurations = typeof configurations;
@@ -22,7 +21,7 @@ export type CustomRouteOptions = {
 	handler: (request: RequestParts) => Promise<HandlerResult>;
 };
 
-export type ApiBuilderInput<AvailableHooks, AvailableServices> = {
+export type ApiBuilderInput = {
 	configurations: Configurations;
 	hooks: AvailableHooks;
 	services: AvailableServices;
@@ -31,16 +30,15 @@ export type ApiBuilderInput<AvailableHooks, AvailableServices> = {
 export type RegisterApiInput = { prefix: string; routes: Array<CustomRouteOptions> };
 
 export type ApiBuilderOutput = Array<CustomRouteOptions>;
-export type PaginatedQuery = { limit: number; page: number };
 
-export type HookBuilderInput<AvailableServices> = {
+export type HookBuilderInput = {
 	configurations: Configurations;
 	services: AvailableServices;
 };
 
 type TRoutes = Array<{
 	prefix: string;
-	buildHandler: (_: ApiBuilderInput<AvailableHooks, AvailableServices>) => Promise<ApiBuilderOutput>;
+	buildHandler: (_: ApiBuilderInput) => Promise<ApiBuilderOutput>;
 }>;
 
 type TLoadRoutes = {
@@ -67,6 +65,7 @@ export class RoutesManager {
 							headers: request.headers as { [key: string]: string },
 							query: request.query as { [key: string]: string },
 							params: request.params as { [key: string]: string | string[] },
+							locals: reply.locals || {},
 						});
 						const { code, body, headers } = GenerateResponse({ responseInput: result });
 

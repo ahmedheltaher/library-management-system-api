@@ -8,7 +8,6 @@ async function Main() {
 		await applicationInstance.initialize();
 		const bookRepository = new BookRepository();
 		const borrowingRepository = new BorrowingRepository();
-
 		const borrowerRepository = new BorrowerRepository();
 		// const createdBooks = await bookRepository.bulkCreate([
 		// 	{

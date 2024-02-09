@@ -1,6 +1,7 @@
 import { BorrowerApiBuilder } from './borrower';
 import { BookApiBuilder } from './book';
 import { BooksDefinitions } from './book/book.validation';
+import { BorrowerDefinitions } from './borrower/borrower.validation';
 
 export const routes = [
 	{ prefix: '/books', buildHandler: BookApiBuilder },
@@ -8,5 +9,6 @@ export const routes = [
 ];
 
 export const ApiDefinitions = {
-	...BooksDefinitions
-}
+	...BooksDefinitions,
+	...BorrowerDefinitions,
+};

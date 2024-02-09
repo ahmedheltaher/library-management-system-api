@@ -1,14 +1,76 @@
+import { configurations } from '../core';
 import { BorrowerRepository, BorrowerInput } from '../database';
+import { JWTService } from '../utils';
+
+type TLoginInput = {
+	email: string;
+	password: string;
+};
+
+type TChangeEmailInput = {
+	id: string;
+	newEmail: string;
+	currentPassword: string;
+};
+
+type TChangePasswordInput = {
+	id: string;
+	newPassword: string;
+	currentPassword: string;
+};
+
+type TDeleteAccountInput = {
+	id: string;
+	currentPassword: string;
+};
 
 export class BorrowerService {
 	constructor(private readonly borrowerRepository: BorrowerRepository) {}
 
-	async add(createData: BorrowerInput) {
+	async register(createData: BorrowerInput) {
 		return await this.borrowerRepository.create(createData);
 	}
 
-	async getAll() {
-		return await this.borrowerRepository.findAll();
+	async login({ email, password }: TLoginInput) {
+		const borrower = await this.getByEmail(email);
+		if (!borrower) return { status: false };
+		if (!borrower.comparePassword(password)) return { status: false };
+		const token = JWTService.generateToken(
+			{ UID: borrower.dataValues.id },
+			configurations.jwt.secret,
+			configurations.jwt.tokenDuration.short
+		);
+		return { status: true, token };
+	}
+
+	async changeEmail({ id, newEmail, currentPassword }: TChangeEmailInput) {
+		const borrower = await this.getById(id);
+		if (!borrower) return { status: false };
+		if (!borrower.comparePassword(currentPassword)) return { status: false };
+		await this.update(id, { email: newEmail });
+		return { status: true };
+	}
+
+	async changePassword({ id, newPassword, currentPassword }: TChangePasswordInput) {
+		const borrower = await this.getById(id);
+		if (!borrower) return { status: false };
+		if (!borrower.comparePassword(currentPassword)) return { status: false };
+		await this.update(id, { password: newPassword });
+		return { status: true };
+	}
+	async deleteAccount({ id, currentPassword }: TDeleteAccountInput) {
+		const borrower = await this.getById(id);
+		if (!borrower) return { status: false };
+		if (!borrower.comparePassword(currentPassword)) return { status: false };
+		await this.delete(id);
+		return { status: true };
+	}
+	async getAll({ limit, offset }: PaginatedServiceMethod = { limit: -1, offset: 0 }) {
+		const options: Record<string, any> = {};
+		if (offset) options.offset = offset;
+		if (limit && limit > -1) options.limit = limit;
+
+		return await this.borrowerRepository.findAll(options);
 	}
 
 	async getById(id: string) {

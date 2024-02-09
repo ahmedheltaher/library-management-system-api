@@ -1,7 +1,7 @@
 import jwt, { Secret } from 'jsonwebtoken';
 
 export class JWTService {
-	static generateToken(data: object, secretKey: Secret, expiresIn: string = '1h'): string {
+	static generateToken(data: object, secretKey: Secret, expiresIn: number): string {
 		if (!data || typeof data !== 'object') {
 			throw new Error('Token data must be a non-null object.');
 		}

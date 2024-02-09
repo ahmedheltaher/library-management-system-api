@@ -55,7 +55,7 @@ export class Application {
 
 		this._instance.setErrorHandler(errorHandler);
 
-		const services = await GetServices(configurations);
+		const services = await GetServices();
 		const hooks = await GetHooks({ configurations, services });
 		const builtRoutes = await RoutesManager.LoadRoutes({ routes, hooks, services });
 		for (const route of builtRoutes) {

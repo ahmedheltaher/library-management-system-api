@@ -4,6 +4,7 @@ export const ERROR_RESPONSE_MESSAGES = [
 	'INVALID_INPUT',
 	'ENTITY_NOT_FOUND',
 	'CONFLICT',
+	'UNAUTHORIZED'
 ] as const;
 
 
@@ -51,6 +52,10 @@ export const errorMessages: Record<ErrorResponseMessages, ResponseDetails> = {
 	CONFLICT: {
 		message: 'Conflict Happened while Processing the Request',
 		statusCode: 409,
+	},
+	UNAUTHORIZED: {
+		message: 'You are not Unauthorized to do this Action',
+		statusCode: 403,
 	},
 };
 
