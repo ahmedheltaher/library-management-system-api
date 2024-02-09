@@ -1,4 +1,3 @@
-import { ApiBuilderInput, ApiBuilderOutput } from '../../../core/utils/routes-manager';
 import { BookSchemas } from './book.validation';
 
 export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiBuilderOutput> {

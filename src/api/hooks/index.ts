@@ -1,4 +1,3 @@
-import { HookBuilderInput } from '../../core/utils/routes-manager';
 import { LibrariansOnlyBuilder } from './librarians-only.hook';
 import { TokenRequiredBuilder } from './token-required.hook';
 

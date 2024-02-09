@@ -1,4 +1,3 @@
-import { ApiBuilderInput, ApiBuilderOutput } from '../../../core/utils/routes-manager';
 import { BorrowerSchemas } from './borrower.validation';
 
 export async function BorrowerApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiBuilderOutput> {

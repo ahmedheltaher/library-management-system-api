@@ -3,7 +3,7 @@ import { FastifyDynamicSwaggerOptions } from '@fastify/swagger';
 export const swaggerOptions: FastifyDynamicSwaggerOptions = {
 	swagger: {
 		info: {
-			title: 'Library Management System API',
+			title: '',
 			description:
 				'This API provides endpoints for managing a library system, including operations related to books, borrowers, borrowing, and librarian functionalities.',
 			version: '0.1.0',

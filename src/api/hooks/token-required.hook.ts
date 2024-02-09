@@ -1,6 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { GenerateResponse } from '../../core/utils';
-import { HookBuilderInput } from '../../core/utils/routes-manager';
 import { JWTService } from '../../utils';
 
 const typeLookup: Record<string, string> = {

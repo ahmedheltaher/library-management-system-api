@@ -37,10 +37,6 @@ export class BorrowingService {
 		});
 	}
 
-	async getByBookId(bookId: string) {
-		return await this.borrowingRepository.findAll({ where: { bookId } });
-	}
-
 	async getByBorrowerId(borrowerId: string) {
 		return await this.borrowingRepository.findAll({
 			where: { borrowerId },

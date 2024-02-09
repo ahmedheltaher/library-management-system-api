@@ -1,4 +1,3 @@
-import { ApiBuilderInput, ApiBuilderOutput } from '../../../core/utils/routes-manager';
 import { LibrarianSchemas } from './librarian.validation';
 
 export async function LibrarianApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiBuilderOutput> {

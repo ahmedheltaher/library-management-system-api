@@ -18,10 +18,6 @@ interface ApplicationOptions {
 	port: number;
 }
 
-export type InitializationParameters = {
-	definitions: OpenAPIV2.DefinitionsObject;
-};
-
 /**
  * The main Application class responsible for managing Fastify app and HTTP server.
  */
@@ -41,11 +37,18 @@ export class Application {
 		});
 	}
 
+	/**
+	 * Initializes Swagger documentation.
+	 */
 	private async initSwagger() {
 		await this._instance.register(fastifySwagger, swaggerOptions);
 		await this._instance.register(fastifySwaggerUI, swaggerUIOptions);
 	}
 
+	/**
+	 * Initializes the application by loading modules and registering routes.
+	 * @param definitions - OpenAPI definitions.
+	 */
 	private async init(definitions: OpenAPIV2.DefinitionsObject) {
 		if (configurations.isDevelopmentEnvironment()) await this.initSwagger();
 
@@ -58,14 +61,29 @@ export class Application {
 		const services = await GetServices();
 		const hooks = await GetHooks({ configurations, services });
 		const builtRoutes = await RoutesManager.LoadRoutes({ routes, hooks, services });
+
 		for (const route of builtRoutes) {
 			this._instance.route(route);
 		}
+
+		// Define a health check endpoint to verify server health.
+		// This endpoint responds to HEAD and GET requests with a status 'ok'.
+		this._instance.route({
+			method: ['HEAD', 'GET'],
+			url: '/health',
+			handler: async (request, reply) => {
+				reply.code(200).send({ status: 'ok' });
+			},
+		});
+
+		//Listen to all routes to discourage brute force attacks and provide a warm welcome message.
+		this._instance.all('*', async (request, reply) => {
+			reply.code(200).send({ message: 'Welcome to Library Management System API!' });
+		});
 	}
 
 	/**
-	 * Initializes the application by loading modules and registering routes.
-	 * @returns {Promise<void>} A Promise indicating the completion of initialization.
+	 * Initializes the application by syncing the database and registering routes.
 	 */
 	public async initialize(): Promise<void> {
 		await syncDatabase();
@@ -74,7 +92,7 @@ export class Application {
 
 	/**
 	 * Gets the Fastify application instance.
-	 * @returns {FastifyInstance} The Fastify application instance.
+	 * @returns The Fastify application instance.
 	 */
 	public get instance(): FastifyInstance {
 		return this._instance;
@@ -82,9 +100,9 @@ export class Application {
 
 	/**
 	 * Starts listening on the specified host and port.
-	 * @param {ApplicationOptions} options - Options for configuring the host and port.
-	 * @param {(err: Error | null, address: string) => void} [callback] - An optional callback function to execute when the server is started.
-	 * @returns {Application} The current Application instance.
+	 * @param options - Options for configuring the host and port.
+	 * @param callback - An optional callback function to execute when the server is started.
+	 * @returns The current Application instance.
 	 */
 	public listen(options: ApplicationOptions, callback?: (err: Error | null, address: string) => void): Application {
 		const { host, port } = options;

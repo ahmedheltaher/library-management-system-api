@@ -1,78 +1,58 @@
-import { FastifyReply, FastifyRequest, FastifySchema, HTTPMethods, preHandlerAsyncHookHandler } from 'fastify';
-import { GenerateResponse, HandlerResult, configurations, stripSlashes } from '.';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { GenerateResponse, configurations, stripSlashes } from '.';
 
-// TODO: Make it a better typed
-export type RequestParts = {
-	body: FastifyRequest['body'];
-	headers: FastifyRequest['headers'];
-	query: FastifyRequest['query'];
-	params: FastifyRequest['params'];
-	locals: Record<string, any>;
-};
-
-export type Configurations = typeof configurations;
-
-export type CustomRouteOptions = {
-	url: string;
-	method: HTTPMethods;
-	schema?: FastifySchema;
-	preHandler?: Array<preHandlerAsyncHookHandler>;
-	handler: (request: RequestParts) => Promise<HandlerResult>;
-};
-
-export type ApiBuilderInput = {
-	configurations: Configurations;
-	hooks: AvailableHooks;
-	services: AvailableServices;
-};
-
-export type RegisterApiInput = { prefix: string; routes: Array<CustomRouteOptions> };
-
-export type ApiBuilderOutput = Array<CustomRouteOptions>;
-
-export type HookBuilderInput = {
-	configurations: Configurations;
-	services: AvailableServices;
-};
-
+/**
+ * Type representing routes with their prefix and build handler function.
+ */
 type TRoutes = Array<{
 	prefix: string;
 	buildHandler: (_: ApiBuilderInput) => Promise<ApiBuilderOutput>;
 }>;
 
+/**
+ * Type representing input data for loading routes.
+ */
 type TLoadRoutes = {
 	routes: TRoutes;
 	hooks: AvailableHooks;
 	services: AvailableServices;
 };
 
+/**
+ * Utility class to manage loading routes.
+ */
 export class RoutesManager {
 	private constructor() {}
 
+	/**
+	 * Load routes based on the provided routes, hooks, and services.
+	 * @param routes - Routes to load.
+	 * @param hooks - Hooks to apply.
+	 * @param services - Services to use.
+	 * @returns Loaded routes.
+	 */
 	static async LoadRoutes({ routes, hooks, services }: TLoadRoutes) {
 		const builtRoutes = [];
 		for await (const { prefix, buildHandler } of routes) {
 			const fullPrefix = `/${configurations.api.version}/${stripSlashes(prefix)}`;
 			const rowRoutes = await buildHandler({ configurations, hooks, services });
 			for (const route of rowRoutes) {
-				builtRoutes.push({
-					...route,
-					url: `/${stripSlashes(`${configurations.api.prefix}/${stripSlashes(fullPrefix)}/${stripSlashes(route.url)}`)}`,
-					handler: async (request: FastifyRequest, reply: FastifyReply) => {
-						const result = await route.handler({
-							body: request.body || {},
-							headers: request.headers as { [key: string]: string },
-							query: request.query as { [key: string]: string },
-							params: request.params as { [key: string]: string | string[] },
-							locals: reply.locals || {},
-						});
-						const { code, body, headers } = GenerateResponse({ responseInput: result });
+				const url = `/${stripSlashes(`${configurations.api.prefix}/${stripSlashes(fullPrefix)}/${stripSlashes(route.url)}`)}`;
+				const handler = async (request: FastifyRequest, reply: FastifyReply) => {
+					const result = await route.handler({
+						body: request.body || {},
+						headers: request.headers as { [key: string]: string },
+						query: request.query as { [key: string]: string },
+						params: request.params as { [key: string]: string | string[] },
+						locals: reply.locals || {},
+					});
+					const { code, body, headers } = GenerateResponse({ responseInput: result });
 
-						for (const headerName in headers) reply.header(headerName, headers[headerName]);
+					for (const headerName in headers) reply.header(headerName, headers[headerName]);
 
-						return reply.code(code).send(body);
-					},
-				});
+					return reply.code(code).send(body);
+				};
+				builtRoutes.push({ ...route, url, handler });
 			}
 		}
 		return builtRoutes;
