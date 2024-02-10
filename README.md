@@ -71,7 +71,7 @@ For more detailed information about the project architecture, database schema, a
 
 -   [Architecture Overview](./docs/architecture.md): Provides insights into the architecture of the Library Management System API, including its layers and components.
 -   [Database Schema](./docs/db.md): Describes the database schema used in the project, detailing the tables and their relationships.
--   [Folder Structure](./docs/structure.ms): Explains the folder structure of the project, highlighting the organization of files and directories.
+-   [Folder Structure](./docs/structure.md): Explains the folder structure of the project, highlighting the organization of files and directories.
 
 
 Refer to these documents for comprehensive understanding and reference regarding the project components and structure.
