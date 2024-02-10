@@ -36,6 +36,7 @@ export async function BorrowerApiBuilder({ services, hooks }: ApiBuilderInput): 
 			url: '/login',
 			method: 'POST',
 			schema: BorrowerSchemas.Login,
+			config: { rateLimit: { limit: 5, interval: 60 } },
 			handler: async ({ body }) => {
 				const { status, token } = await borrowerService.login(body as any);
 				if (!status) {

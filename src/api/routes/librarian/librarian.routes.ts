@@ -7,6 +7,7 @@ export async function LibrarianApiBuilder({ services, hooks }: ApiBuilderInput):
 			url: '/login',
 			method: 'POST',
 			schema: LibrarianSchemas.Login,
+			config: { rateLimit: { limit: 5, interval: 60 } },
 			handler: async ({ body }) => {
 				const { status, token } = await librarianService.login(body as any);
 				if (!status) {

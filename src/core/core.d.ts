@@ -1,5 +1,6 @@
 import 'fastify';
 import { FastifyRequest, FastifySchema, HTTPMethods, preHandlerAsyncHookHandler } from 'fastify';
+import { FastifyContextConfig } from 'fastify/types/context';
 import Redis from 'ioredis';
 import { HandlerResult, configurations } from './utils';
 
@@ -22,8 +23,8 @@ declare global {
 		}
 
 		interface RouteRateLimitOptions {
-			limit?: number; // Maximum number of requests allowed
-			interval?: number; // Time window in seconds
+			limit: number; // Maximum number of requests allowed
+			interval: number; // Time window in seconds
 		}
 	}
 
@@ -51,6 +52,7 @@ declare global {
 		method: HTTPMethods;
 		schema?: FastifySchema;
 		preHandler?: Array<preHandlerAsyncHookHandler>;
+		config?: FastifyContextConfig;
 		handler: (request: RequestParts) => Promise<HandlerResult>;
 	};
 

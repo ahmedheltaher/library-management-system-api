@@ -133,3 +133,6 @@ dist
 logs/
 
 docker/postgres-data
+
+.env,database
+docekr/.env,database

@@ -4,7 +4,7 @@ import fastify, { FastifyInstance } from 'fastify';
 import { OpenAPIV2 } from 'openapi-types';
 import { ApiDefinitions, routes } from '../api';
 import { GetHooks } from '../api/hooks';
-import { RedisSingleton, syncDatabase } from '../database/server';
+import { RedisSingleton, seed, syncDatabase } from '../database/server';
 import { GetServices } from '../services';
 import { rateLimitPlugin } from './extensions';
 import { configurations, errorHandler, loggers, swaggerOptions, swaggerUIOptions } from './utils';
@@ -60,7 +60,7 @@ export class Application {
 		this._instance.setErrorHandler(errorHandler);
 		const redisClient = await RedisSingleton.connect({ ...configurations.redis });
 
-		this._instance.register(rateLimitPlugin, { limit: 10, interval: 15, redisClient });
+		this._instance.register(rateLimitPlugin, { limit: 10, interval: 5, redisClient });
 
 		const services = await GetServices();
 		const hooks = await GetHooks({ configurations, services });
@@ -75,11 +75,6 @@ export class Application {
 		this._instance.route({
 			method: ['HEAD', 'GET'],
 			url: '/health',
-			config: {
-				rateLimit: {
-					limit: 5,
-				},
-			},
 			handler: async (request, reply) => {
 				reply.code(200).send({ status: 'ok' });
 			},
@@ -103,6 +98,7 @@ export class Application {
 	 */
 	public async initialize(): Promise<void> {
 		await syncDatabase();
+		await seed('./seed.json');
 		await this.init({ ...definitions, ...ApiDefinitions });
 	}
 
