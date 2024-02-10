@@ -51,5 +51,6 @@ export const loggers = {
 	requests: createLogger({ filename: 'requests', level: 'trace', logToConsole: false }),
 	exceptions: createLogger({ filename: 'exceptions', level: 'trace', logToConsole: true }),
 	database: createLogger({ filename: 'database', level: 'trace', logToConsole: true }),
+	redis: createLogger({ filename: 'redis', level: 'trace', logToConsole: true }),
 	application: createLogger({ filename: 'application', level: 'trace', logToFile: false }),
 };

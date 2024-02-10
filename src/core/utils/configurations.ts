@@ -42,6 +42,11 @@ const configurations = {
 		version: '/v1',
 	},
 
+	redis: {
+		host: process.env.REDIS_HOST || 'localhost',
+		port: parseEnvironmentInteger('REDIS_PORT', 6379),
+	},
+
 	bcrypt: { saltOrRounds: 8 },
 
 	isDevelopmentEnvironment() {

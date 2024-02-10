@@ -1,14 +1,32 @@
 import 'fastify';
 import { FastifyRequest, FastifySchema, HTTPMethods, preHandlerAsyncHookHandler } from 'fastify';
+import Redis from 'ioredis';
 import { HandlerResult, configurations } from './utils';
 
 declare module 'fastify' {
 	interface FastifyReply {
 		locals: Record<string, any>;
 	}
+	interface FastifyContextConfig {
+		rateLimit?: rateLimiter.RouteRateLimitOptions | false;
+	}
 }
 
 declare global {
+	namespace rateLimiter {
+		// Define rate limit options interface
+		interface RateLimitOptions {
+			limit: number; // Maximum number of requests allowed
+			interval: number; // Time window in seconds
+			redisClient: Redis;
+		}
+
+		interface RouteRateLimitOptions {
+			limit?: number; // Maximum number of requests allowed
+			interval?: number; // Time window in seconds
+		}
+	}
+
 	/**
 	 * Type representing different parts of a request.
 	 */

@@ -38,17 +38,23 @@ export class RoutesManager {
 			const rowRoutes = await buildHandler({ configurations, hooks, services });
 			for (const route of rowRoutes) {
 				const url = `/${stripSlashes(`${configurations.api.prefix}/${stripSlashes(fullPrefix)}/${stripSlashes(route.url)}`)}`;
+
 				const handler = async (request: FastifyRequest, reply: FastifyReply) => {
 					const result = await route.handler({
 						body: request.body || {},
 						headers: request.headers as { [key: string]: string },
 						query: request.query as { [key: string]: string },
 						params: request.params as { [key: string]: string | string[] },
-						locals: reply.locals || {},
+						locals: reply.locals,
 					});
 					const { code, body, headers } = GenerateResponse({ responseInput: result });
 
 					for (const headerName in headers) reply.header(headerName, headers[headerName]);
+
+					if (reply.locals.headers) {
+						for (const headerName in reply.locals.headers)
+							reply.header(headerName, reply.locals.headers[headerName]);
+					}
 
 					return reply.code(code).send(body);
 				};

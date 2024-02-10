@@ -28,7 +28,7 @@ export async function TokenRequiredBuilder({ configurations, services }: HookBui
 				if (!borrower) return reply.code(code).send(body);
 			}
 
-			reply.locals = { ...payload, type };
+			reply.locals = { ...reply.locals, ...payload, type };
 		} catch (error) {
 			return reply.code(code).send(body);
 		}
