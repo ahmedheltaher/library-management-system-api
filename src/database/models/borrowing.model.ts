@@ -7,18 +7,18 @@ interface BorrowingAttributes {
 	borrowerId: string;
 	checkoutDate: Date;
 	dueDate: Date;
-	returnDate: Date;
+	returnDate: Date | null;
 }
 export interface BorrowingInput
 	extends Optional<BorrowingAttributes, 'checkoutDate' | 'returnDate'>,
 		Optional<IDates, 'createdAt' | 'deletedAt' | 'updatedAt'> {}
 
 export class Borrowing extends Model<BorrowingAttributes, BorrowingInput> implements BorrowingAttributes {
-	public bookId!: string;
-	public borrowerId!: string;
-	public checkoutDate!: Date;
-	public dueDate!: Date;
-	public returnDate!: Date;
+	declare bookId: string;
+	declare borrowerId: string;
+	declare checkoutDate: Date;
+	declare dueDate: Date;
+	declare returnDate: Date | null;
 
 	toJSON() {
 		return this.jsonSerializer.toJSON(this.dataValues, ['createdAt', 'updatedAt']);

@@ -1,5 +1,8 @@
 import * as fs from 'fs/promises';
 import { BookRepository, BorrowerRepository, LibrarianRepository } from '../';
+import { loggers } from '../../core';
+
+const seedLogger = loggers.database.child({ module: 'seeder' });
 
 /**
  * Seeds the database with data from a JSON file.
@@ -7,16 +10,16 @@ import { BookRepository, BorrowerRepository, LibrarianRepository } from '../';
  * @returns {Promise<void>} - A promise that resolves once the seeding is complete.
  */
 export async function seed(filePath: string): Promise<void> {
-	console.log("󱓞 ~ seed ~ alreadySeeded:", "alreadySeeded")
 	const bookRepository = new BookRepository();
 	const librarianRepository = new LibrarianRepository();
 	const borrowerRepository = new BorrowerRepository();
 
 	try {
+
 		// Check if seeding is necessary
 		const alreadySeeded = (await librarianRepository.findAll()).length > 0;
 		if (alreadySeeded) {
-			console.info('The database is already seeded.');
+			seedLogger.info('The database is already seeded.');
 			return;
 		}
 
@@ -31,8 +34,8 @@ export async function seed(filePath: string): Promise<void> {
 			borrowerRepository.bulkCreate(borrowers),
 		]);
 
-		console.info('Database successfully seeded.');
+		seedLogger.info('Database successfully seeded.');
 	} catch (error) {
-		console.error('Error seeding the database:', error);
+		seedLogger.error(`Error seeding the database: ${error}`);
 	}
 }

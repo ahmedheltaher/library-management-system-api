@@ -15,12 +15,12 @@ export interface BookInput
 		Optional<IDates, 'createdAt' | 'deletedAt' | 'updatedAt'> {}
 
 export class Book extends Model<BookAttributes, BookInput> implements BookAttributes {
-	public id!: string;
-	public title!: string;
-	public author!: string;
-	public ISBN!: string;
-	public availableQuantity!: number;
-	public shelfLocation!: string;
+	declare id: string;
+	declare title: string;
+	declare author: string;
+	declare ISBN: string;
+	declare availableQuantity: number;
+	declare shelfLocation: string;
 
 	toJSON() {
 		return this.jsonSerializer.toJSON(this.dataValues, ['createdAt', 'updatedAt']);

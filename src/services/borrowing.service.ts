@@ -1,5 +1,5 @@
 import { loggers } from '../core';
-import { BookRepository, BorrowerRepository, BorrowingRepository } from '../database';
+import { BookRepository, BorrowerRepository, BorrowingRepository, DBOperators } from '../database';
 import { Book, Borrower } from '../database/models';
 
 type TReturnBook = {
@@ -58,7 +58,7 @@ export class BorrowingService {
 
 	async getOverDueBorrowings() {
 		return await this.borrowingRepository.findAll({
-			where: { returnDate: { $eq: null }, dueDate: { $lt: new Date() } },
+			where: { returnDate: { [DBOperators.is]: null }, dueDate: { [DBOperators.lt]: new Date() } },
 			include: [
 				{ model: Borrower, as: 'borrower', attributes: ['id', 'name'] },
 				{ model: Book, as: 'book', attributes: ['id', 'title', 'author', 'ISBN'] },
@@ -69,7 +69,7 @@ export class BorrowingService {
 
 	async getUserOverDueBorrowings(borrowerId: string) {
 		return await this.borrowingRepository.findAll({
-			where: { returnDate: { $eq: null }, dueDate: { $lt: new Date() }, borrowerId },
+			where: { returnDate: { [DBOperators.is]: null }, dueDate: { [DBOperators.lt]: new Date() }, borrowerId },
 			include: [
 				{ model: Borrower, as: 'borrower', attributes: ['id', 'name'] },
 				{ model: Book, as: 'book', attributes: ['id', 'title', 'author', 'ISBN'] },
@@ -116,7 +116,7 @@ export class BorrowingService {
 
 	async returnBook({ bookId, borrowerId }: TReturnBook) {
 		const existingBorrowing = await this.borrowingRepository.findOne({
-			where: { borrowerId, bookId, returnDate: { $eq: null } },
+			where: { borrowerId, bookId, returnDate: { [DBOperators.is]: null } },
 		});
 		if (!existingBorrowing) return { status: false, message: 'You have not borrowed this book.' };
 
@@ -154,8 +154,11 @@ export class BorrowingService {
 			],
 			attributes: ['checkoutDate', 'dueDate', 'returnDate'],
 			where: {
-				checkoutDate: { $and: { $gte: startDate, $lte: endDate } },
-				...(onlyOverDue && { returnDate: { $eq: null }, dueDate: { $lt: new Date() } }),
+				checkoutDate: { [DBOperators.and]: { [DBOperators.gte]: startDate, [DBOperators.lte]: endDate } },
+				...(onlyOverDue && {
+					returnDate: { [DBOperators.is]: null },
+					dueDate: { [DBOperators.lt]: new Date() },
+				}),
 			},
 		});
 	}

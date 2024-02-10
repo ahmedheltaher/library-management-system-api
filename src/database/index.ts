@@ -1,3 +1,5 @@
+export { Op as DBOperators } from 'sequelize';
+export { BookInput, BorrowerInput, BorrowingInput, LibrarianInput } from './models';
 export * from './repositories';
-export { LibrarianInput, BookInput, BorrowerInput, BorrowingInput } from './models';
 export { syncDatabase } from './server';
+

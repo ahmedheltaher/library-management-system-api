@@ -1,4 +1,4 @@
-import { BookInput, BookRepository, BorrowingRepository } from '../database';
+import { BookInput, BookRepository, BorrowingRepository, DBOperators } from '../database';
 
 export class BookService {
 	constructor(
@@ -28,13 +28,13 @@ export class BookService {
 
 	async getByTitle(title: string) {
 		return await this.bookRepository.findAll({
-			where: { title: { $like: `%${title}%` } },
+			where: { title: { [DBOperators.like]: `%${title}%` } },
 		});
 	}
 
 	async getByAuthor(author: string) {
 		return await this.bookRepository.findAll({
-			where: { author: { $like: `%${author}%` } },
+			where: { author: { [DBOperators.like]: `%${author}%` } },
 		});
 	}
 

@@ -15,10 +15,10 @@ export interface BorrowerInput
 		Optional<IDates, 'createdAt' | 'deletedAt' | 'updatedAt'> {}
 
 export class Borrower extends Model<BorrowerAttributes, BorrowerInput> implements BorrowerAttributes {
-	public id!: string;
-	public name!: string;
-	public email!: string;
-	public password!: string;
+	declare id: string;
+	declare name: string;
+	declare email: string;
+	declare password: string;
 
 	comparePassword(password: string): boolean {
 		return bcrypt.compareSync(password, this.dataValues.password);

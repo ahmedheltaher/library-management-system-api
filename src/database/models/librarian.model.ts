@@ -16,11 +16,11 @@ export interface LibrarianInput
 		Optional<IDates, 'createdAt' | 'deletedAt' | 'updatedAt'> {}
 
 export class Librarian extends Model<LibrarianAttributes, LibrarianInput> implements LibrarianAttributes {
-	public id!: string;
-	public name!: string;
-	public password!: string;
-	public email!: string;
-	public isChefLibrarian!: boolean;
+	declare id: string;
+	declare name: string;
+	declare password: string;
+	declare email: string;
+	declare isChefLibrarian: boolean;
 
 	comparePassword(password: string): boolean {
 		return bcrypt.compareSync(password, this.dataValues.password);
