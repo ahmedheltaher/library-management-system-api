@@ -6,10 +6,12 @@ import { LibrarianService } from './librarian.service';
 
 export async function GetServices() {
 	const bookRepository = new BookRepository();
+	const borrowerRepository = new BorrowerRepository();
+	const borrowingRepository = new BorrowingRepository();
 
-	const bookService = new BookService(bookRepository, new BorrowingRepository());
-	const borrowerService = new BorrowerService(new BorrowerRepository());
-	const borrowingService = new BorrowingService(new BorrowingRepository(), bookRepository);
+	const bookService = new BookService(bookRepository, borrowingRepository);
+	const borrowerService = new BorrowerService(borrowerRepository);
+	const borrowingService = new BorrowingService(borrowingRepository, bookRepository, borrowerRepository);
 	const librarianService = new LibrarianService(new LibrarianRepository());
 
 	return { bookService, borrowerService, borrowingService, librarianService } as const;

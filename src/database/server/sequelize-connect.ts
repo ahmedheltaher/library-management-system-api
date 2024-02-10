@@ -16,6 +16,10 @@ export const sequelizeConnection = new Sequelize({
 		$ne: Op.ne,
 		$eq: Op.eq,
 		$lt: Op.lt,
+		$gt: Op.gt,
+		$lte: Op.lte,
+		$gte: Op.gte,
+		$and: Op.and,
 	},
 });
 

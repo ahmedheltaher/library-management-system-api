@@ -1,3 +1,4 @@
+import { Parser } from '@json2csv/plainjs';
 import { BorrowingSchemas } from './borrowing.validation';
 
 export async function BorrowingApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiBuilderOutput> {
@@ -76,6 +77,93 @@ export async function BorrowingApiBuilder({ services, hooks }: ApiBuilderInput):
 				const { UID } = locals;
 				const borrowings = await borrowingService.getUserOverDueBorrowings(UID);
 				return { status: true, data: { borrowings } };
+			},
+		},
+		{
+			url: '/report-status',
+			method: 'GET',
+			schema: BorrowingSchemas.ReportStatus,
+			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
+			handler: async ({ query }) => {
+				const { startDate, endDate } = query as any;
+				const parser = new Parser();
+				const borrowings = await borrowingService.reportStatus({
+					startDate: new Date(startDate),
+					endDate: new Date(endDate),
+				});
+				const csv = parser.parse(JSON.parse(JSON.stringify(borrowings)));
+
+				return {
+					status: true,
+					data: { borrowings },
+					file: csv,
+					headers: {
+						'Content-Type': 'text/csv',
+						'Content-Disposition': `attachment; filename="report-${Date.now()}"`,
+					},
+				};
+			},
+		},
+		{
+			url: '/last-month-borrowing-processes',
+			method: 'GET',
+			schema: BorrowingSchemas.LastMonthBorrowingProcess,
+			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
+			handler: async ({ query }) => {
+				const borrowings = await borrowingService.borrowingProcessesLastNDays({ days: 30 });
+				if (!borrowings.length)
+					return {
+						status: true,
+						data: { borrowings },
+						file: 'nothing to show',
+						headers: {
+							'Content-Type': 'text/csv',
+							'Content-Disposition': `attachment; filename="report-${Date.now()}"`,
+						},
+					};
+				const parser = new Parser();
+				const csv = parser.parse(JSON.parse(JSON.stringify(borrowings)));
+
+				return {
+					status: true,
+					data: { borrowings },
+					file: csv,
+					headers: {
+						'Content-Type': 'text/csv',
+						'Content-Disposition': `attachment; filename="report-${Date.now()}"`,
+					},
+				};
+			},
+		},
+		{
+			url: '/last-month-overdue-borrowing-processes',
+			method: 'GET',
+			schema: BorrowingSchemas.LastMonthOverdueBorrowingProcess,
+			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
+			handler: async ({ query }) => {
+				const borrowings = await borrowingService.borrowingProcessesLastNDays({ days: 120, onlyOverDue:true });
+				if (!borrowings.length)
+					return {
+						status: true,
+						data: { borrowings },
+						file: 'nothing to show',
+						headers: {
+							'Content-Type': 'text/csv',
+							'Content-Disposition': `attachment; filename="report-${Date.now()}"`,
+						},
+					};
+				const parser = new Parser();
+				const csv = parser.parse(JSON.parse(JSON.stringify(borrowings)));
+
+				return {
+					status: true,
+					data: { borrowings },
+					file: csv,
+					headers: {
+						'Content-Type': 'text/csv',
+						'Content-Disposition': `attachment; filename="report-${Date.now()}"`,
+					},
+				};
 			},
 		},
 	];

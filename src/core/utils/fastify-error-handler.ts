@@ -3,7 +3,6 @@ import { GenerateResponse, loggers } from '.';
 
 export const errorHandler = (error: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
 	const { validation } = error;
-	console.log('󱓞 ~ errorHandler ~ error:', error);
 	loggers.exceptions.error({
 		error: {
 			code: error.code,

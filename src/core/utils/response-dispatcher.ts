@@ -13,6 +13,7 @@ export type HandlerResult =
 	| {
 			status: true;
 			data: Record<string, any>;
+			file?: any;
 			headers?: Record<string, any>;
 	  }
 	| {
@@ -71,8 +72,11 @@ export function GenerateResponse({ responseInput }: GenerateResponseInput): Gene
 	const { status, headers = {} } = responseInput;
 
 	if (status) {
+		if(responseInput.file) return { code: 200, body: responseInput.file, headers };
 		return { code: 200, body: { status, data: responseInput.data }, headers };
 	}
+
+
 
 	const { error } = responseInput;
 	const { message, statusCode } = errorMessages[error.type];

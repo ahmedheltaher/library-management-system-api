@@ -1,5 +1,5 @@
 import { loggers } from '../core';
-import { BookRepository, BorrowingRepository } from '../database';
+import { BookRepository, BorrowerRepository, BorrowingRepository } from '../database';
 import { Book, Borrower } from '../database/models';
 
 type TReturnBook = {
@@ -12,14 +12,26 @@ type TBorrowABook = {
 	dueDate: Date;
 };
 
+type TReportStatus = {
+	startDate: Date;
+	endDate: Date;
+	onlyOverDue?: boolean;
+};
+
 function isAfterNow(date: Date) {
 	return new Date(date).valueOf() > new Date().valueOf();
 }
 
+type TBorrowingProcessLastNDays = {
+	days: number;
+	onlyOverDue?: boolean;
+};
+
 export class BorrowingService {
 	constructor(
 		private readonly borrowingRepository: BorrowingRepository,
-		private readonly bookRepository: BookRepository
+		private readonly bookRepository: BookRepository,
+		private readonly borrowerRepository: BorrowerRepository
 	) {}
 
 	async getAll({ limit, offset }: PaginatedServiceMethod = { limit: -1, offset: 0 }) {
@@ -67,6 +79,9 @@ export class BorrowingService {
 	}
 
 	async borrowABook({ bookId, borrowerId, dueDate }: TBorrowABook) {
+		const borrower = await this.borrowerRepository.findOne({ where: { id: borrowerId } });
+		if (!borrower) return { status: false, message: 'This user is not allowed to borrow a book.' };
+
 		const existingBorrowing = await this.borrowingRepository.findOne({ where: { borrowerId, bookId } });
 		if (existingBorrowing) return { status: false, message: 'You are already borrowing a copy of this book.' };
 
@@ -103,7 +118,6 @@ export class BorrowingService {
 		const existingBorrowing = await this.borrowingRepository.findOne({
 			where: { borrowerId, bookId, returnDate: { $eq: null } },
 		});
-		console.log('󱓞 ~ BorrowingService ~ returnBook ~ existingBorrowing:', existingBorrowing);
 		if (!existingBorrowing) return { status: false, message: 'You have not borrowed this book.' };
 
 		const book = await this.bookRepository.findOne({ where: { id: bookId } });
@@ -130,5 +144,26 @@ export class BorrowingService {
 		}
 
 		return { status: true, message: 'You have successfully returned the book.' };
+	}
+
+	async reportStatus({ startDate, endDate, onlyOverDue }: TReportStatus) {
+		return await this.borrowingRepository.findAll({
+			include: [
+				{ model: Borrower, as: 'borrower', attributes: ['id', 'name'] },
+				{ model: Book, as: 'book', attributes: ['id', 'title', 'author', 'ISBN'] },
+			],
+			attributes: ['checkoutDate', 'dueDate', 'returnDate'],
+			where: {
+				checkoutDate: { $and: { $gte: startDate, $lte: endDate } },
+				...(onlyOverDue && { returnDate: { $eq: null }, dueDate: { $lt: new Date() } }),
+			},
+		});
+	}
+
+	async borrowingProcessesLastNDays({ days, onlyOverDue = false }: TBorrowingProcessLastNDays) {
+		const endDate = new Date();
+		const startDate = new Date();
+		startDate.setDate(startDate.getDate() - days);
+		return await this.reportStatus({ startDate, endDate, onlyOverDue });
 	}
 }

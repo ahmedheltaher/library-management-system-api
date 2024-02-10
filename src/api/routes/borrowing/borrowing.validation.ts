@@ -85,6 +85,7 @@ export const BorrowingSchemas = EntitySchema({
 			errors: ['401'],
 		}),
 	},
+
 	BorrowABook: {
 		summary: 'Borrow a book from the library',
 		description:
@@ -141,6 +142,49 @@ export const BorrowingSchemas = EntitySchema({
 		security: [{ apiKey: [] }],
 		response: GetResponses({
 			successResponse: { borrowings: { type: 'array', items: { $ref: '$MyBorrowings' } } },
+			errors: ['401'],
+		}),
+	},
+
+	ReportStatus: {
+		summary: 'Export all borrowings Between Two Dates',
+		description:
+			'`**Only For Librarian**` This endpoint exports a list of all borrowings Between Two Dates  in the library system. It will return as csv string.',
+		querystring: {
+			type: 'object',
+			properties: {
+				startDate: { type: 'string', format: 'date-time' },
+				endDate: { type: 'string', format: 'date-time' },
+			},
+			required: ['startDate', 'endDate'],
+			additionalProperties: false,
+		},
+		tags: ['Borrowing'],
+		security: [{ apiKey: [] }],
+		response: GetResponses({
+			successResponse: {  },
+			errors: ['401'],
+		}),
+	},
+
+	LastMonthBorrowingProcess: {
+		summary: 'Export all last month borrowings',
+		description:
+			'`**Only For Librarian**` This endpoint export a list of all borrowings happened last month in the library system. It will return as csv string.',
+		tags: ['Borrowing'],
+		security: [{ apiKey: [] }],
+		response: GetResponses({
+			successResponse: {  },
+			errors: ['401'],
+		}),
+	},LastMonthOverdueBorrowingProcess: {
+		summary: 'Export all last month overdue borrowings',
+		description:
+			'`**Only For Librarian**` This endpoint export a list of all overdue borrowings happened last month in the library system. It will return as csv string.',
+		tags: ['Borrowing'],
+		security: [{ apiKey: [] }],
+		response: GetResponses({
+			successResponse: {  },
 			errors: ['401'],
 		}),
 	},
