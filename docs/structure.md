@@ -13,6 +13,39 @@ The project directory consists of several directories and files, each serving a 
 -   **`services`**: Houses service layer code responsible for business logic implementation.
 -   **`utils`**: Contains utility functions and helpers used throughout the application.
 
+```mermaid
+graph TD;
+    src[<b>src</b>]
+    api[<b>api</b>]
+    core[<b>core</b>]
+    database[<b>database</b>]
+    services[<b>services</b>]
+    src_utils[<b>utils</b>]
+    core_utils[<b>utils</b>]
+    validation[<b>validation</b>]
+    routes[<b>routes</b>]
+    hooks[<b>hooks</b>]
+    extensions[<b>extensions</b>]
+    models[<b>models</b>]
+    repositories[<b>repositories</b>]
+    server[<b>server</b>]
+
+    src --> api
+    src --> core
+    src --> database
+    src --> services
+    src --> src_utils
+    api --> routes
+    api --> hooks
+    core --> extensions
+    core --> core_utils
+    core --> validation
+    database --> models
+    database --> repositories
+    database --> server
+
+```
+
 ## Why Choose This Structure?
 
 -   **`Modularity and Organization`**: The structure adopts a modular approach, organizing directories by functionality, which promotes clean code architecture and makes it easier to locate and maintain code.
