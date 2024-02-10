@@ -88,7 +88,7 @@ export class BorrowingService {
 		const book = await this.bookRepository.findOne({ where: { id: bookId } });
 		if (!book) return { status: false, message: 'The requested book does not exist or may have been deleted.' };
 
-		if (book.dataValues.availableQuantity <= 0)
+		if (!book.isBorrowable())
 			return { status: false, message: 'There are no more copies left to borrow of this book.' };
 
 		if (!isAfterNow(new Date(dueDate))) return { status: false, message: 'The due date must be in the future.' };
@@ -96,11 +96,8 @@ export class BorrowingService {
 		const transaction = await this.bookRepository.startTransaction();
 		try {
 			await this.borrowingRepository.create({ bookId, borrowerId, dueDate }, { transaction });
-
-			await this.bookRepository.update(
-				{ availableQuantity: book.dataValues.availableQuantity - 1 },
-				{ where: { id: bookId }, transaction }
-			);
+			const isBorrowed = await book.borrow(transaction);
+			if (!isBorrowed) throw new Error("Can't Borrow this book no more copies left");
 
 			await this.bookRepository.commitTransaction(transaction);
 		} catch (error) {
@@ -125,15 +122,9 @@ export class BorrowingService {
 
 		const transaction = await this.bookRepository.startTransaction();
 		try {
-			await this.borrowingRepository.update(
-				{ returnDate: new Date() },
-				{ where: { borrowerId, bookId }, transaction }
-			);
+			await existingBorrowing.return(transaction);
+			await book.return(transaction);
 
-			await this.bookRepository.update(
-				{ availableQuantity: book.dataValues.availableQuantity + 1 },
-				{ where: { id: bookId }, transaction }
-			);
 			await this.bookRepository.commitTransaction(transaction);
 		} catch (error) {
 			loggers.database.error(

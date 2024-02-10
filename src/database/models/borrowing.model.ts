@@ -1,4 +1,4 @@
-import { Model, Optional } from 'sequelize';
+import { Model, Optional, Transaction } from 'sequelize';
 import { sequelizeConnection } from '../server';
 import { FieldFactory, IDates, JSONSerializer } from '../utils';
 
@@ -25,6 +25,11 @@ export class Borrowing extends Model<BorrowingAttributes, BorrowingInput> implem
 	}
 
 	private jsonSerializer = new JSONSerializer<BorrowingAttributes>();
+
+	async return(transaction: Transaction): Promise<boolean> {
+		await this.update({ returnDate: new Date() }, { transaction });
+		return true;
+	}
 }
 
 Borrowing.init(

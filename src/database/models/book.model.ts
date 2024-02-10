@@ -1,4 +1,4 @@
-import { Model, Optional } from 'sequelize';
+import { Model, Optional, Transaction } from 'sequelize';
 import { sequelizeConnection } from '../server';
 import { FieldFactory, IDates, JSONSerializer } from '../utils';
 
@@ -27,6 +27,21 @@ export class Book extends Model<BookAttributes, BookInput> implements BookAttrib
 	}
 
 	private jsonSerializer = new JSONSerializer<BookAttributes>();
+
+	async borrow(transaction: Transaction): Promise<boolean> {
+		if (this.availableQuantity <= 0) return false;
+		await this.update({ availableQuantity: this.availableQuantity - 1 }, { transaction });
+		return true;
+	}
+
+	async return(transaction: Transaction): Promise<boolean> {
+		await this.update({ availableQuantity: this.availableQuantity + 1 }, { transaction });
+		return true;
+	}
+
+	isBorrowable(): boolean {
+		return this.availableQuantity > 0;
+	}
 }
 
 Book.init(
