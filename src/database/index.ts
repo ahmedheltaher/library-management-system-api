@@ -3,3 +3,7 @@ export { BookInput, BorrowerInput, BorrowingInput, LibrarianInput } from './mode
 export * from './repositories';
 export { syncDatabase } from './server';
 
+import { sequelizeConnection } from './server';
+import { TransactionManager } from './utils';
+
+export const transactionManager = new TransactionManager(sequelizeConnection);

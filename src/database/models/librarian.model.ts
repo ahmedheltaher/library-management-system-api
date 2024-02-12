@@ -27,7 +27,7 @@ export class Librarian extends Model<LibrarianAttributes, LibrarianInput> implem
 	}
 
 	toJSON() {
-		return this.jsonSerializer.toJSON(this.dataValues, ['createdAt', 'updatedAt']);
+		return this.jsonSerializer.toJSON({ modelInstance: this.dataValues, keysToDelete: ['createdAt', 'updatedAt'] });
 	}
 
 	private jsonSerializer = new JSONSerializer<LibrarianAttributes>();

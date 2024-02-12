@@ -1,6 +1,5 @@
-import { CreateOptions, DestroyOptions, FindOptions, Model, ModelStatic, Transaction, UpdateOptions } from 'sequelize';
+import { CreateOptions, DestroyOptions, FindOptions, Model, ModelStatic, UpdateOptions } from 'sequelize';
 import { MakeNullishOptional } from 'sequelize/types/utils';
-import { sequelizeConnection } from '../../server';
 
 type CreationAttributes<M extends Model> = MakeNullishOptional<M['_creationAttributes']>;
 
@@ -11,9 +10,6 @@ interface BaseRepositoryInterface<M extends Model, I extends CreationAttributes<
 	bulkCreate(entities: Array<I>, options?: CreateOptions<M>): Promise<Array<M>>;
 	update(entity: Partial<I>, options?: UpdateOptions<M>): Promise<[affectedCount: number, affectedRows: Array<M>]>;
 	delete(options?: DestroyOptions<M>): Promise<number>;
-	startTransaction(): Promise<Transaction>;
-	commitTransaction(transaction: Transaction): Promise<void>;
-	rollbackTransaction(transaction: Transaction): Promise<void>;
 }
 
 export class BaseRepository<M extends Model, I extends CreationAttributes<M>> implements BaseRepositoryInterface<M, I> {
@@ -23,7 +19,6 @@ export class BaseRepository<M extends Model, I extends CreationAttributes<M>> im
 	 * JavaScript may produce a larger number by 192, and subtracting from it might not affect the last three digits as expected.
 	 */
 	private POSTGRESQL_MAX_BIG_INT = 2 ** 63 - 1000;
-	private openTransactions: Transaction[] = [];
 	constructor(private model: ModelStatic<M>) {}
 
 	public async findAll(options?: FindOptions<M>): Promise<Array<M>> {
@@ -64,26 +59,4 @@ export class BaseRepository<M extends Model, I extends CreationAttributes<M>> im
 		return await this.model.destroy(options);
 	}
 
-	public async startTransaction(): Promise<Transaction> {
-		const transaction = await sequelizeConnection.transaction();
-		this.openTransactions.push(transaction);
-		return transaction;
-	}
-
-	public async commitTransaction(transaction: Transaction): Promise<void> {
-		await transaction.commit();
-		this.removeTransaction(transaction);
-	}
-
-	public async rollbackTransaction(transaction: Transaction): Promise<void> {
-		await transaction.rollback();
-		this.removeTransaction(transaction);
-	}
-
-	private removeTransaction(transaction: Transaction): void {
-		const index = this.openTransactions.indexOf(transaction);
-		if (index !== -1) {
-			this.openTransactions.splice(index, 1);
-		}
-	}
 }

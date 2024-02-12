@@ -25,7 +25,11 @@ export class Borrower extends Model<BorrowerAttributes, BorrowerInput> implement
 	}
 
 	toJSON() {
-		return this.jsonSerializer.toJSON(this.dataValues, ['updatedAt'], { createdAt: 'registrationDate' });
+		return this.jsonSerializer.toJSON({
+			modelInstance: this.dataValues,
+			keysToDelete: ['updatedAt'],
+			keyAliases: { createdAt: 'registrationDate' },
+		});
 	}
 
 	private jsonSerializer = new JSONSerializer<BorrowerAttributes>();

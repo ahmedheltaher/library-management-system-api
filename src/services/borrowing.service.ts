@@ -1,5 +1,5 @@
 import { loggers } from '../core';
-import { BookRepository, BorrowerRepository, BorrowingRepository, DBOperators } from '../database';
+import { BookRepository, BorrowerRepository, BorrowingRepository, DBOperators, transactionManager } from '../database';
 import { Book, Borrower } from '../database/models';
 
 type TReturnBook = {
@@ -93,18 +93,18 @@ export class BorrowingService {
 
 		if (!isAfterNow(new Date(dueDate))) return { status: false, message: 'The due date must be in the future.' };
 
-		const transaction = await this.bookRepository.startTransaction();
+		const transaction = await transactionManager.startTransaction();
 		try {
 			await this.borrowingRepository.create({ bookId, borrowerId, dueDate }, { transaction });
 			const isBorrowed = await book.borrow(transaction);
 			if (!isBorrowed) throw new Error("Can't Borrow this book no more copies left");
 
-			await this.bookRepository.commitTransaction(transaction);
+			await transactionManager.commitTransaction(transaction);
 		} catch (error) {
 			loggers.database.error(
 				`An error occurred while borrowing the book with ID ${bookId} for borrower ${borrowerId}: ${error}`
 			);
-			await this.bookRepository.rollbackTransaction(transaction);
+			await transactionManager.rollbackTransaction(transaction);
 			return { status: false, message: 'An error occurred while borrowing the book. Please try again later.' };
 		}
 
@@ -120,17 +120,17 @@ export class BorrowingService {
 		const book = await this.bookRepository.findOne({ where: { id: bookId } });
 		if (!book) return { status: false, message: 'The requested book does not exist or may have been deleted.' };
 
-		const transaction = await this.bookRepository.startTransaction();
+		const transaction = await transactionManager.startTransaction();
 		try {
 			await existingBorrowing.return(transaction);
 			await book.return(transaction);
 
-			await this.bookRepository.commitTransaction(transaction);
+			await transactionManager.commitTransaction(transaction);
 		} catch (error) {
 			loggers.database.error(
 				`An error occurred while returning the book with ID ${bookId} for borrower ${borrowerId}: ${error}`
 			);
-			await this.bookRepository.rollbackTransaction(transaction);
+			await transactionManager.rollbackTransaction(transaction);
 			return { status: false, message: 'An error occurred while returning the book. Please try again later.' };
 		}
 

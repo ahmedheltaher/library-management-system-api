@@ -21,7 +21,7 @@ export class Borrowing extends Model<BorrowingAttributes, BorrowingInput> implem
 	declare returnDate: Date | null;
 
 	toJSON() {
-		return this.jsonSerializer.toJSON(this.dataValues, ['createdAt', 'updatedAt']);
+		return this.jsonSerializer.toJSON({ modelInstance: this.dataValues, keysToDelete: ['createdAt', 'updatedAt'] });
 	}
 
 	private jsonSerializer = new JSONSerializer<BorrowingAttributes>();

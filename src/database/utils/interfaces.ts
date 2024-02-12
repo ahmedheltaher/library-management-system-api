@@ -8,8 +8,16 @@ interface Attributes {
 	[key: string]: any;
 }
 
+type TToJSON<T extends Attributes> = {
+	modelInstance: T;
+	keysToDelete?: Array<string>;
+	keyAliases?: {
+		[key: string]: string;
+	};
+};
+
 export class JSONSerializer<T extends Attributes> {
-	toJSON(modelInstance: T, keysToDelete?: string[], keyAliases?: { [key: string]: string }): T {
+	toJSON({ modelInstance, keysToDelete, keyAliases }: TToJSON<T>): T {
 		const values = { ...modelInstance };
 
 		// Delete keys to be deleted
