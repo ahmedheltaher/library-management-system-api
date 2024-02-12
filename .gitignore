@@ -129,10 +129,7 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-
 logs/
 
 docker/postgres-data
-
-.env,database
-docekr/.env,database
+docker/.env.database
