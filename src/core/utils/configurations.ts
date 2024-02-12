@@ -1,15 +1,27 @@
-import dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 
-const environmentData = dotenv.config();
-
-if (environmentData.error) {
-	throw new Error("Couldn't find .env file");
+// Load environment variables from .env file
+const environmentResult = dotenv.config();
+if (environmentResult.error) {
+	throw new Error(
+		"Failed to load environment variables from .env file. Please check the file exists and has valid syntax"
+	);
 }
 
-const parseEnvironmentInteger = (key: string, defaultValue: number) =>
-	parseInt(process.env[key] || '', 10) || defaultValue;
+/**
+ * Parses an environment variable as an integer with a default value.
+ *
+ * @param key - The name of the environment variable to parse
+ * @param defaultValue - The default value to use if the env var is not set or invalid
+ * @returns The parsed integer value or the default value
+ */
+const parseEnvironmentInteger = (key: string, defaultValue: number) => {
+	const value = process.env[key];
+	const parsedValue = parseInt(value, 10);
+	return Number.isNaN(parsedValue) ? defaultValue : parsedValue;
+};
 
-const configurations = {
+export const configurations = {
 	server: {
 		port: parseEnvironmentInteger('SERVER_PORT', 3000),
 		host: process.env.SERVER_HOST || '127.0.0.1',
@@ -53,5 +65,3 @@ const configurations = {
 		return (process.env.NODE_ENV || '').toUpperCase() === 'DEVELOPMENT';
 	},
 };
-
-export { configurations };
