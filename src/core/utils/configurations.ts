@@ -9,17 +9,18 @@ if (environmentResult.error) {
 }
 
 /**
- * Parses an environment variable as an integer with a default value.
+ * Parses an environment variable as an integer, returning a default value if parsing fails.
  *
- * @param key - The name of the environment variable to parse
- * @param defaultValue - The default value to use if the env var is not set or invalid
- * @returns The parsed integer value or the default value
+ * @param key - The name of the environment variable to parse.
+ * @param defaultValue - The default value to return if parsing fails.
+ * @returns The parsed integer value of the environment variable, or the default value if parsing failed.
  */
 const parseEnvironmentInteger = (key: string, defaultValue: number) => {
-	const value = process.env[key];
+	const value = process.env[key] || "";
 	const parsedValue = parseInt(value, 10);
 	return Number.isNaN(parsedValue) ? defaultValue : parsedValue;
 };
+
 
 export const configurations = {
 	server: {
