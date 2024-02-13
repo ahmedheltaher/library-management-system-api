@@ -1,12 +1,16 @@
 import { BookInput, BookRepository, BorrowingRepository, DBOperators } from '../database';
 
+
+export type TBookCreate = BookInput;
+export type TBookUpdate = Partial<BookInput>;
+
 export class BookService {
 	constructor(
 		private readonly bookRepository: BookRepository,
 		private readonly borrowingRepository: BorrowingRepository
 	) {}
 
-	async add(createData: BookInput) {
+	async add(createData: TBookCreate) {
 		return await this.bookRepository.create(createData);
 	}
 
@@ -38,7 +42,7 @@ export class BookService {
 		});
 	}
 
-	async update(id: string, updateData: Partial<BookInput>) {
+	async update(id: string, updateData: TBookUpdate) {
 		return await this.bookRepository.update(updateData, { where: { id } });
 	}
 

@@ -1,16 +1,20 @@
 import { Parser } from '@json2csv/plainjs';
 import { BorrowingSchemas } from './borrowing.validation';
 
+type TBorrowABookBody = { bookId: string; dueDate: Date };
+type TReportStatusInput = {startDate: string;endDate: string;};
+
 export async function BorrowingApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiBuilderOutput> {
 	const { borrowingService } = services;
+
 	return [
 		{
 			url: '/',
 			method: 'GET',
 			schema: BorrowingSchemas.GetAllBorrowings,
 			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
-			handler: async ({ query }) => {
-				const { limit = -1, page = 1 } = query as PaginatedQuery;
+			handler: async ({ query }: HandlerParameter<{ query: PaginatedQuery }>) => {
+				const { limit = -1, page = 1 } = query;
 				return {
 					status: true,
 					data: { borrowings: await borrowingService.getAll({ limit, offset: (page - 1) * limit }) },
@@ -22,10 +26,9 @@ export async function BorrowingApiBuilder({ services, hooks }: ApiBuilderInput):
 			method: 'POST',
 			schema: BorrowingSchemas.BorrowABook,
 			preHandler: [hooks.tokenRequired],
-			handler: async ({ body, locals }) => {
+			handler: async ({ body, locals }: HandlerParameter<{ body: TBorrowABookBody }>) => {
 				const { UID } = locals;
-				const { bookId, dueDate } = body as any;
-				const { status, message } = await borrowingService.borrowABook({ borrowerId: UID, bookId, dueDate });
+				const { status, message } = await borrowingService.borrowABook({ borrowerId: UID, ...body });
 				if (!status) {
 					return { status: false, error: { type: 'INVALID_INPUT', details: { message } } };
 				}
@@ -37,9 +40,10 @@ export async function BorrowingApiBuilder({ services, hooks }: ApiBuilderInput):
 			method: 'POST',
 			schema: BorrowingSchemas.ReturnBook,
 			preHandler: [hooks.tokenRequired],
-			handler: async ({ body, locals }) => {
+			handler: async ({ body, locals }: HandlerParameter<{ body: { bookId: string } }>) => {
 				const { UID } = locals;
-				const { bookId } = body as any;
+				const { bookId } = body;
+
 				const { status, message } = await borrowingService.returnBook({ borrowerId: UID, bookId });
 				if (!status) {
 					return { status: false, error: { type: 'INVALID_INPUT', details: { message } } };
@@ -63,7 +67,7 @@ export async function BorrowingApiBuilder({ services, hooks }: ApiBuilderInput):
 			method: 'GET',
 			schema: BorrowingSchemas.GetOverDueBorrowings,
 			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
-			handler: async ({}) => {
+			handler: async () => {
 				const borrowings = await borrowingService.getOverDueBorrowings();
 				return { status: true, data: { borrowings } };
 			},
@@ -84,8 +88,8 @@ export async function BorrowingApiBuilder({ services, hooks }: ApiBuilderInput):
 			method: 'GET',
 			schema: BorrowingSchemas.ReportStatus,
 			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
-			handler: async ({ query }) => {
-				const { startDate, endDate } = query as any;
+			handler: async ({ query }: HandlerParameter<{ query: TReportStatusInput }>) => {
+				const { startDate, endDate } = query;
 				const parser = new Parser();
 				const borrowings = await borrowingService.reportStatus({
 					startDate: new Date(startDate),
@@ -109,7 +113,7 @@ export async function BorrowingApiBuilder({ services, hooks }: ApiBuilderInput):
 			method: 'GET',
 			schema: BorrowingSchemas.LastMonthBorrowingProcess,
 			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
-			handler: async ({ query }) => {
+			handler: async ({ }) => {
 				const borrowings = await borrowingService.borrowingProcessesLastNDays({ days: 30 });
 				if (!borrowings.length)
 					return {
@@ -140,8 +144,8 @@ export async function BorrowingApiBuilder({ services, hooks }: ApiBuilderInput):
 			method: 'GET',
 			schema: BorrowingSchemas.LastMonthOverdueBorrowingProcess,
 			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
-			handler: async ({ query }) => {
-				const borrowings = await borrowingService.borrowingProcessesLastNDays({ days: 120, onlyOverDue:true });
+			handler: async ({  }) => {
+				const borrowings = await borrowingService.borrowingProcessesLastNDays({ days: 120, onlyOverDue: true });
 				if (!borrowings.length)
 					return {
 						status: true,

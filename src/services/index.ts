@@ -16,3 +16,8 @@ export async function GetServices() {
 
 	return { bookService, borrowerService, borrowingService, librarianService } as const;
 }
+
+export { TBookCreate, TBookUpdate } from './books.service';
+export { TLoginInput, TRegisterInput } from './borrower.service';
+export { TLibrarianLoginInput } from './librarian.service';
+

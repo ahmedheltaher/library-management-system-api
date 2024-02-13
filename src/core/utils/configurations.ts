@@ -26,8 +26,19 @@ export const configurations = {
 	server: {
 		port: parseEnvironmentInteger('SERVER_PORT', 3000),
 		host: process.env.SERVER_HOST || '127.0.0.1',
+		// TODO: Add support for CORS
+		// cors: {
+		// 	enabled: process.env.CORS_ENABLED === 'true',
+		// 	allowedOrigins: process.env.CORS_ALLOWED_ORIGINS?.split(',') || [],
+		// }
+		// TODO: Add support for https
+		// https: {
+			// enabled: process.env.HTTPS_ENABLED === 'true',
+			// port: parseEnvironmentInteger('HTTPS_PORT', 443),
+			// key: process.env.HTTPS_KEY || '',
+			// cert: process.env.HTTPS_CERT || '',
+		// },
 	},
-	nodeEnvironment: process.env.NODE_ENV || 'development',
 
 	database: {
 		database: process.env.DATABASE_NAME || '',
@@ -46,13 +57,9 @@ export const configurations = {
 		},
 	},
 
-	logs: {
-		level: process.env.LOG_LEVEL || 'silly',
-	},
 
 	api: {
-		prefix: '/api',
-		version: '/v1',
+		prefix: '/api'
 	},
 
 	redis: {

@@ -1,4 +1,9 @@
+import { TLoginInput, TRegisterInput } from '../../../services';
 import { BorrowerSchemas } from './borrower.validation';
+
+type TChangeEmailBody = { newEmail: string; currentPassword: string };
+type TChangePasswordBody = { newPassword: string; currentPassword: string };
+type TDeleteAccountBody = { currentPassword: string };
 
 export async function BorrowerApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiBuilderOutput> {
 	const { borrowerService } = services;
@@ -8,8 +13,8 @@ export async function BorrowerApiBuilder({ services, hooks }: ApiBuilderInput): 
 			method: 'GET',
 			schema: BorrowerSchemas.GetAllBorrowers,
 			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
-			handler: async ({ query }) => {
-				const { limit = -1, page = 1 } = query as PaginatedQuery;
+			handler: async ({ query }: HandlerParameter<{ query: PaginatedQuery }>) => {
+				const { limit = -1, page = 1 } = query;
 				return {
 					status: true,
 					data: { borrowers: await borrowerService.getAll({ limit, offset: (page - 1) * limit }) },
@@ -20,9 +25,9 @@ export async function BorrowerApiBuilder({ services, hooks }: ApiBuilderInput): 
 			url: '/',
 			method: 'POST',
 			schema: BorrowerSchemas.Register,
-			handler: async ({ body }) => {
+			handler: async ({ body }: HandlerParameter<{ body: TRegisterInput }>) => {
 				try {
-					await borrowerService.register(body as any);
+					await borrowerService.register(body);
 					return { status: true, data: { message: 'You Have Registered Successfully' } };
 				} catch (error: any) {
 					return {
@@ -37,8 +42,8 @@ export async function BorrowerApiBuilder({ services, hooks }: ApiBuilderInput): 
 			method: 'POST',
 			schema: BorrowerSchemas.Login,
 			config: { rateLimit: { limit: 5, interval: 60 } },
-			handler: async ({ body }) => {
-				const { status, token } = await borrowerService.login(body as any);
+			handler: async ({ body }: HandlerParameter<{ body: TLoginInput }>) => {
+				const { status, token } = await borrowerService.login(body);
 				if (!status) {
 					return {
 						status: false,
@@ -53,11 +58,10 @@ export async function BorrowerApiBuilder({ services, hooks }: ApiBuilderInput): 
 			method: 'PUT',
 			schema: BorrowerSchemas.ChangeEmail,
 			preHandler: [hooks.tokenRequired],
-			handler: async ({ body, locals }) => {
+			handler: async ({ body, locals }: HandlerParameter<{ body: TChangeEmailBody }>) => {
 				try {
 					const { UID } = locals;
-					const { newEmail, currentPassword } = body as any;
-					const { status } = await borrowerService.changeEmail({ id: UID, newEmail, currentPassword });
+					const { status } = await borrowerService.changeEmail({ id: UID, ...body });
 					if (!status) {
 						return {
 							status: false,
@@ -78,10 +82,9 @@ export async function BorrowerApiBuilder({ services, hooks }: ApiBuilderInput): 
 			method: 'PUT',
 			schema: BorrowerSchemas.ChangePassword,
 			preHandler: [hooks.tokenRequired],
-			handler: async ({ body, locals }) => {
+			handler: async ({ body, locals }: HandlerParameter<{ body: TChangePasswordBody }>) => {
 				const { UID } = locals;
-				const { newPassword, currentPassword } = body as any;
-				const { status } = await borrowerService.changePassword({ id: UID, newPassword, currentPassword });
+				const { status } = await borrowerService.changePassword({ id: UID, ...body });
 				if (!status) {
 					return {
 						status: false,
@@ -96,10 +99,9 @@ export async function BorrowerApiBuilder({ services, hooks }: ApiBuilderInput): 
 			method: 'DELETE',
 			schema: BorrowerSchemas.DeleteAccount,
 			preHandler: [hooks.tokenRequired],
-			handler: async ({ body, locals }) => {
+			handler: async ({ body, locals }: HandlerParameter<{ body: TDeleteAccountBody }>) => {
 				const { UID } = locals;
-				const { currentPassword } = body as any;
-				const { status } = await borrowerService.deleteAccount({ id: UID, currentPassword });
+				const { status } = await borrowerService.deleteAccount({ id: UID, ...body });
 				if (!status) {
 					return {
 						status: false,

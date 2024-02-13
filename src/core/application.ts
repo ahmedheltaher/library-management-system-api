@@ -60,11 +60,11 @@ export class Application {
 		this._instance.setErrorHandler(errorHandler);
 		const redisClient = await RedisSingleton.connect({ ...configurations.redis });
 
-		this._instance.register(rateLimitPlugin, { limit: 10, interval: 5, redisClient });
+		this._instance.register(rateLimitPlugin, { limit: 50, interval: 5, redisClient });
 
 		const services = await GetServices();
 		const hooks = await GetHooks({ configurations, services });
-		const builtRoutes = await RoutesManager.LoadRoutes({ routes, hooks, services });
+		const builtRoutes = await RoutesManager.loadRoutes({ routes, hooks, services });
 
 		for (const route of builtRoutes) {
 			this._instance.route(route);

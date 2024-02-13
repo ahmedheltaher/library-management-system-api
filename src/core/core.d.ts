@@ -1,5 +1,5 @@
 import 'fastify';
-import { FastifyRequest, FastifySchema, HTTPMethods, preHandlerAsyncHookHandler } from 'fastify';
+import { FastifySchema, HTTPMethods, preHandlerAsyncHookHandler } from 'fastify';
 import { FastifyContextConfig } from 'fastify/types/context';
 import Redis from 'ioredis';
 import { HandlerResult, configurations } from './utils';
@@ -28,15 +28,25 @@ declare global {
 		}
 	}
 
+	interface RequestParts {
+		body: any;
+		headers: any;
+		query: any;
+		params:any;
+	}
+
 	/**
 	 * Type representing different parts of a request.
 	 */
-	type RequestParts = {
-		body: FastifyRequest['body'];
-		headers: FastifyRequest['headers'];
-		query: FastifyRequest['query'];
-		params: FastifyRequest['params'];
+	type HandlerParameter<Parts extends Partial<RequestParts>> = {
+		body: Parts['body'];
+		headers: Parts['headers'];
+		query: Parts['query'];
+		params: Parts['params'];
+
 		locals: Record<string, any>;
+		method: HTTPMethods;
+		url: string;
 	};
 
 	/**
@@ -49,11 +59,11 @@ declare global {
 	 */
 	export type CustomRouteOptions = {
 		url: string;
-		method: HTTPMethods;
+		method: HTTPMethods | Array<HTTPMethods>;
 		schema?: FastifySchema;
 		preHandler?: Array<preHandlerAsyncHookHandler>;
 		config?: FastifyContextConfig;
-		handler: (request: RequestParts) => Promise<HandlerResult>;
+		handler: (request: HandlerParameter<RequestParts>) => Promise<HandlerResult>;
 	};
 
 	/**

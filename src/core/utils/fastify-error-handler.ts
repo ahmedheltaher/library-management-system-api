@@ -1,34 +1,38 @@
 import fastify, { FastifyError, FastifyReply, FastifyRequest } from 'fastify';
 import { GenerateResponse, loggers } from '.';
 
+/**
+ * Error handler for Fastify application.
+ * @param error The FastifyError object.
+ * @param request The FastifyRequest object.
+ * @param reply The FastifyReply object.
+ */
 export const errorHandler = (error: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
-	const { validation } = error;
+	const { code, message, name, stack, statusCode, validation, validationContext } = error;
+
+	// Log the error
 	loggers.exceptions.error({
-		error: {
-			code: error.code,
-			message: error.message,
-			name: error.name,
-			stack: error.stack,
-			statusCode: error.statusCode,
-			validation: error.validation,
-			validationContext: error.validationContext,
-		},
+		error: { code, message, name, stack, statusCode, validation, validationContext },
 		'request-id': request.id,
 	});
+
+	// Handling specific error scenarios
 	if (error instanceof fastify.errorCodes.FST_ERR_BAD_URL) {
-		const { code, body } = GenerateResponse({
+		const { code: generatedCode, body } = GenerateResponse({
 			responseInput: {
 				status: false,
 				error: { type: 'INVALID_INPUT', details: { message: 'URL Is Invalid' } },
 			},
 		});
-		return reply.status(code).send(body);
+		return reply.status(generatedCode).send(body);
 	}
-	const { code, body } = GenerateResponse({
+
+	// Default error response
+	const { code: generatedCode, body } = GenerateResponse({
 		responseInput: {
 			status: false,
 			error: { type: validation ? 'INVALID_INPUT' : 'INTERNAL_SERVER_ERROR', details: validation },
 		},
 	});
-	reply.status(code).send(body);
+	reply.status(generatedCode).send(body);
 };

@@ -7,7 +7,7 @@
 		"strict": true,
 		"esModuleInterop": true,
 		"lib": ["ES5", "ES6", "DOM", "DOM.Iterable"],
-		"downlevelIteration": true
+		"downlevelIteration": true,
 	},
 	"ts-node": {
 		"files": true

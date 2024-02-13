@@ -2,15 +2,12 @@ import { configurations } from '../core';
 import { LibrarianRepository } from '../database';
 import { JWTService } from '../utils';
 
-type TLoginInput = {
-	email: string;
-	password: string;
-};
+export type TLibrarianLoginInput = { email: string; password: string };
 
 export class LibrarianService {
 	constructor(private readonly librarianRepository: LibrarianRepository) {}
 
-	async login({ email, password }: TLoginInput) {
+	async login({ email, password }: TLibrarianLoginInput) {
 		const librarian = await this.librarianRepository.findOne({ where: { email } });
 		if (!librarian) return { status: false };
 		if (!librarian.comparePassword(password)) return { status: false };

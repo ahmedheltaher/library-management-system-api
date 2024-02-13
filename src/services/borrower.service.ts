@@ -2,17 +2,6 @@ import { configurations } from '../core';
 import { BorrowerInput, BorrowerRepository } from '../database';
 import { JWTService } from '../utils';
 
-type TLoginInput = {
-	email: string;
-	password: string;
-};
-
-type TChangeEmailInput = {
-	id: string;
-	newEmail: string;
-	currentPassword: string;
-};
-
 type TChangePasswordInput = {
 	id: string;
 	newPassword: string;
@@ -24,10 +13,16 @@ type TDeleteAccountInput = {
 	currentPassword: string;
 };
 
+export type TRegisterInput = BorrowerInput;
+export type TLoginInput = { email: string; password: string };
+type TChangeEmailInput = { id: string; newEmail: string; currentPassword: string };
+
+type TBorrowerUpdate = Partial<BorrowerInput>;
+
 export class BorrowerService {
 	constructor(private readonly borrowerRepository: BorrowerRepository) {}
 
-	async register(createData: BorrowerInput) {
+	async register(createData: TRegisterInput) {
 		return await this.borrowerRepository.create(createData);
 	}
 
@@ -81,7 +76,7 @@ export class BorrowerService {
 		return await this.borrowerRepository.findOne({ where: { email } });
 	}
 
-	async update(id: string, updateData: Partial<BorrowerInput>) {
+	private async update(id: string, updateData: TBorrowerUpdate) {
 		return await this.borrowerRepository.update(updateData, { where: { id } });
 	}
 

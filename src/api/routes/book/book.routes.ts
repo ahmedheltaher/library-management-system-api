@@ -1,4 +1,10 @@
+import { TBookCreate, TBookUpdate } from '../../../services';
 import { BookSchemas } from './book.validation';
+
+type TBookIDQuery = { bookId: string };
+type TBookTitleQuery = { title: string };
+type TBookAuthorQuery = { author: string };
+type TBookISBNQuery = { ISBN: string };
 
 export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Promise<ApiBuilderOutput> {
 	const { bookService } = services;
@@ -8,12 +14,11 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			method: 'GET',
 			schema: BookSchemas.GetAllBooks,
 			preHandler: [hooks.tokenRequired],
-			handler: async ({ query }) => {
-				const { limit = -1, page = 1 } = query as PaginatedQuery;
-				return {
-					status: true,
-					data: { books: await bookService.getAll({ limit, offset: (page - 1) * limit }) },
-				};
+			handler: async ({ query }: HandlerParameter<{ query: PaginatedQuery }>) => {
+				const { limit = -1, page = 1 } = query;
+				const offset = (page - 1) * limit;
+				const books = await bookService.getAll({ limit, offset });
+				return { status: true, data: { books } };
 			},
 		},
 		{
@@ -21,8 +26,8 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			method: 'GET',
 			schema: BookSchemas.GetBook,
 			preHandler: [hooks.tokenRequired],
-			handler: async ({ params }) => {
-				const { bookId } = params as any;
+			handler: async ({ params }: HandlerParameter<{ params: TBookIDQuery }>) => {
+				const { bookId } = params;
 				const book = await bookService.getById(bookId);
 				if (!book) {
 					return { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
@@ -35,8 +40,8 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			method: 'GET',
 			schema: BookSchemas.GetBookByISBN,
 			preHandler: [hooks.tokenRequired],
-			handler: async ({ params }) => {
-				const { ISBN } = params as any;
+			handler: async ({ params }: HandlerParameter<{ params: TBookISBNQuery }>) => {
+				const { ISBN } = params;
 				const book = await bookService.getByISBN(ISBN);
 				if (!book) {
 					return { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
@@ -49,8 +54,8 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			method: 'GET',
 			schema: BookSchemas.GetBookByTitle,
 			preHandler: [hooks.tokenRequired],
-			handler: async ({ params }) => {
-				const { title } = params as any;
+			handler: async ({ params }: HandlerParameter<{ params: TBookTitleQuery }>) => {
+				const { title } = params;
 				const books = await bookService.getByTitle(title);
 				if (!books?.length) {
 					return { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
@@ -63,8 +68,8 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			method: 'GET',
 			schema: BookSchemas.GetBookByAuthor,
 			preHandler: [hooks.tokenRequired],
-			handler: async ({ params }) => {
-				const { author } = params as any;
+			handler: async ({ params }: HandlerParameter<{ params: TBookAuthorQuery }>) => {
+				const { author } = params;
 				const books = await bookService.getByAuthor(author);
 				if (!books?.length) {
 					return { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
@@ -77,11 +82,11 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			method: 'POST',
 			schema: BookSchemas.AddBook,
 			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
-			handler: async ({ body }) => {
+			handler: async ({ body }: HandlerParameter<{ body: TBookCreate }>) => {
 				try {
-					const book = await bookService.add(body as any);
+					const book = await bookService.add(body);
 					return { status: true, data: { book } };
-				} catch (error: any) {
+				} catch (error) {
 					return {
 						status: false,
 						error: {
@@ -99,10 +104,10 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			method: 'PUT',
 			schema: BookSchemas.UpdateBook,
 			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
-			handler: async ({ params, body }) => {
-				const { bookId } = params as any;
+			handler: async ({ params, body }: HandlerParameter<{ params: TBookIDQuery; body: TBookUpdate }>) => {
+				const { bookId } = params;
 
-				const [affectedCount, affectedRows] = await bookService.update(bookId, body as any);
+				const [affectedCount, affectedRows] = await bookService.update(bookId, body);
 				if (!affectedCount) {
 					return { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
 				}
@@ -114,8 +119,8 @@ export async function BookApiBuilder({ services, hooks }: ApiBuilderInput): Prom
 			method: 'DELETE',
 			schema: BookSchemas.DeleteBook,
 			preHandler: [hooks.tokenRequired, hooks.librariansOnly],
-			handler: async ({ params }) => {
-				const { bookId } = params as any;
+			handler: async ({ params }: HandlerParameter<{ params: TBookIDQuery }>) => {
+				const { bookId } = params;
 				const isDeleted = await bookService.delete(bookId);
 				if (!isDeleted) {
 					return { status: false, error: { type: 'ENTITY_NOT_FOUND' } };
