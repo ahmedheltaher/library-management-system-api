@@ -1,5 +1,5 @@
-import pino, { Level } from 'pino';
-import PinoPretty from 'pino-pretty';
+import pino, { Level } from "pino";
+import PinoPretty from "pino-pretty";
 
 /**
  * Input configuration for creating a logger.
@@ -16,14 +16,21 @@ type CreateLoggerInput = {
  * @param options - Configuration options for the logger.
  * @returns The configured logger.
  */
-const createLogger = ({ filename, level, logToConsole = true, logToFile = true }: CreateLoggerInput) => {
-	const streams = [];
+const createLogger = ({
+	filename,
+	level,
+	logToConsole = true,
+	logToFile = true,
+}: CreateLoggerInput) => {
+	const streams: Array<pino.StreamEntry> = [];
 
 	if (logToFile) {
-		streams.push({
-			stream: pino.destination({ dest: `logs/${filename}.log`, append: true, sync: true }),
-			level,
+		const stream = pino.destination({
+			dest: `logs/${filename}.log`,
+			append: true,
+			sync: true,
 		});
+		streams.push({ stream, level });
 	}
 
 	if (logToConsole) {
@@ -33,7 +40,9 @@ const createLogger = ({ filename, level, logToConsole = true, logToFile = true }
 				sync: true,
 				append: true,
 				colorizeObjects: true,
+				minimumLevel: level,
 			}),
+			level
 		});
 	}
 
