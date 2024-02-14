@@ -85,11 +85,17 @@ export class Application {
 			reply.code(200).send({ message: 'Welcome to Library Management System API!' });
 		});
 
-		this._instance.addHook('onRequest', (request, reply, done) => {
+		this._instance.addHook('onRequest', async (request, reply) => {
 			// Executed when onRequest event is triggered
 			// Setting reply.locals to an empty object
 			reply.locals = {};
-			done();
+			loggers.requests.info({
+				'request-id': request.id,
+				'request-method': request.method,
+				'request-url': request.url,
+				'request-headers': request.headers,
+				'request-body': request.body,
+			});
 		});
 	}
 

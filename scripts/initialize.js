@@ -19,7 +19,7 @@ async function createFolderStructure(folderPath) {
  */
 async function main() {
 	// Create folder structure for logs
-	await createFolderStructure('logs');
+	await createFolderStructure('logs/archive');
 }
 
 // Run the main function and handle any errors

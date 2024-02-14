@@ -1,10 +1,11 @@
-import * as dotenv from "dotenv";
+import * as dotenv from 'dotenv';
+import { Level } from 'pino';
 
 // Load environment variables from .env file
 const environmentResult = dotenv.config();
 if (environmentResult.error) {
 	throw new Error(
-		"Failed to load environment variables from .env file. Please check the file exists and has valid syntax"
+		'Failed to load environment variables from .env file. Please check the file exists and has valid syntax'
 	);
 }
 
@@ -16,11 +17,10 @@ if (environmentResult.error) {
  * @returns The parsed integer value of the environment variable, or the default value if parsing failed.
  */
 const parseEnvironmentInteger = (key: string, defaultValue: number) => {
-	const value = process.env[key] || "";
+	const value = process.env[key] || '';
 	const parsedValue = parseInt(value, 10);
 	return Number.isNaN(parsedValue) ? defaultValue : parsedValue;
 };
-
 
 export const configurations = {
 	server: {
@@ -33,11 +33,19 @@ export const configurations = {
 		// }
 		// TODO: Add support for https
 		// https: {
-			// enabled: process.env.HTTPS_ENABLED === 'true',
-			// port: parseEnvironmentInteger('HTTPS_PORT', 443),
-			// key: process.env.HTTPS_KEY || '',
-			// cert: process.env.HTTPS_CERT || '',
+		// enabled: process.env.HTTPS_ENABLED === 'true',
+		// port: parseEnvironmentInteger('HTTPS_PORT', 443),
+		// key: process.env.HTTPS_KEY || '',
+		// cert: process.env.HTTPS_CERT || '',
 		// },
+	},
+
+	logging: {
+		level: (process.env.LOGGING_LEVEL || 'trace') as Level,
+		rotation: {
+			enabled: process.env.LOGGING_ROTATION_ENABLED === 'true',
+			fileSize: parseEnvironmentInteger('LOGGING_ROTATION_FILE_SIZE', 1024 * 1024 * 10), // Default 10MB
+		},
 	},
 
 	database: {
@@ -57,9 +65,8 @@ export const configurations = {
 		},
 	},
 
-
 	api: {
-		prefix: '/api'
+		prefix: '/api',
 	},
 
 	redis: {
