@@ -51,7 +51,7 @@ export class Application {
 	 * @param definitions - OpenAPI definitions.
 	 */
 	private async init(definitions: OpenAPIV2.DefinitionsObject) {
-		if (configurations.isDevelopmentEnvironment()) await this.initSwagger();
+		if (configurations.getEnvironmentType() === 'DEVELOPMENT') await this.initSwagger();
 
 		for (const definition in definitions) {
 			this._instance.addSchema(definitions[definition]);
