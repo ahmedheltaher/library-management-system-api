@@ -2,7 +2,11 @@ import * as dotenv from 'dotenv';
 import { Level } from 'pino';
 
 // Load environment variables from .env file
-dotenv.config();
+const config = dotenv.config();
+
+if (config.error) {
+	throw new Error(`Error loading environment variables from.env file it must be located in the root of the project.`);
+}
 
 /**
  * Parses an environment variable as an integer, returning a default value if parsing fails.

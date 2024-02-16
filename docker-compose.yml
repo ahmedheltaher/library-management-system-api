@@ -32,6 +32,7 @@ services:
         links:
             - database
             - redis
+        env_file: ./.env.node-app
         networks:
             - database-network
             - redis-network

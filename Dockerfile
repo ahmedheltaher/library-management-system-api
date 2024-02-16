@@ -27,9 +27,9 @@ WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/logs ./logs
-COPY --from=builder /app/.env ./.env
+COPY --from=builder /app/.env.node-app ./.env
 
 # Expose the port your app runs on
-EXPOSE 3000
+EXPOSE ${SERVER_PORT}
 
 CMD [ "node", "dist/index.js" ]
