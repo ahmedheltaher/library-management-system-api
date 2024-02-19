@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import { Level } from 'pino';
+import { Dialect } from 'sequelize';
 
 // Load environment variables from .env file
 const config = dotenv.config();
@@ -86,10 +87,11 @@ export const configurations = {
 	},
 
 	database: {
+		databaseType: parseEnvironmentString('DATABASE_TYPE', 'postgres') as Dialect,
 		database: parseEnvironmentString('DATABASE_NAME', ''),
 		password: parseEnvironmentString('DATABASE_PASSWORD', ''),
 		host: parseEnvironmentString('DATABASE_HOST', ''),
-		user: parseEnvironmentString('DATABASE_USER', ''),
+		username: parseEnvironmentString('DATABASE_USER', ''),
 		port: parseEnvironmentInteger('DATABASE_PORT', 1433),
 		force: parseEnvironmentBoolean('DATABASE_FORCE_SYNC', false),
 	},

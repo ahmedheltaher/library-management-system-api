@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { Model, Optional } from 'sequelize';
 import { configurations } from '../../core';
-import { sequelizeConnection } from '../server';
+import { SequelizeSingleton } from '../server';
 import { FieldFactory, IDates, JSONSerializer } from '../utils';
 
 interface LibrarianAttributes {
@@ -47,7 +47,11 @@ Librarian.init(
 		isChefLibrarian: FieldFactory.Boolean().DefaultValue(false).Build(),
 	},
 	{
-		...FieldFactory.BasicModelConfig({ sequelize: sequelizeConnection, tableName: 'librarians', timestamps: true }),
+		...FieldFactory.BasicModelConfig({
+			sequelize: SequelizeSingleton.getInstance().connectionDetails,
+			tableName: 'librarians',
+			timestamps: true,
+		}),
 		indexes: [{ unique: true, fields: [{ name: 'id' }] }],
 	}
 );

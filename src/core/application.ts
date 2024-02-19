@@ -4,7 +4,7 @@ import fastify, { FastifyInstance } from 'fastify';
 import { OpenAPIV2 } from 'openapi-types';
 import { ApiDefinitions, routes } from '../api';
 import { GetHooks } from '../api/hooks';
-import { RedisSingleton, seed, syncDatabase } from '../database/server';
+import { RedisSingleton, SequelizeSingleton, seed } from '../database/server';
 import { GetServices } from '../services';
 import { rateLimitPlugin } from './extensions';
 import { configurations, errorHandler, loggers, swaggerOptions, swaggerUIOptions } from './utils';
@@ -103,7 +103,7 @@ export class Application {
 	 * Initializes the application by syncing the database and registering routes.
 	 */
 	public async initialize(): Promise<void> {
-		await syncDatabase();
+		await SequelizeSingleton.getInstance().sync();
 		await seed('./seed.json');
 		await this.init({ ...definitions, ...ApiDefinitions });
 	}
@@ -126,16 +126,24 @@ export class Application {
 		const { host, port } = options;
 
 		// Default callback logging the server address
-		const defaultCallback = (error: Error | null, address: string) => {
+		const defaultCallback = async (error: Error | null, address: string) => {
 			if (error) {
 				loggers.application.error(`Error starting the server: ${error}`);
-				process.exit(1); // Terminate the process on error
-			} else {
-				loggers.application.info(`Server listening on: ${address}`);
+				this.close();
+				process.exit(1);
 			}
+			loggers.application.info(`Server started at: ${new Date().toISOString()} on ${address}`);
 		};
 
 		this._instance.listen({ port, host }, callback || defaultCallback);
 		return this;
+	}
+
+	public close() {
+		this._instance.close(async () => {
+			await RedisSingleton.close();
+			await SequelizeSingleton.close();
+			loggers.application.info(`Server closed at: ${new Date().toISOString()}`);
+		});
 	}
 }

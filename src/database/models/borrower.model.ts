@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import { Model, Optional } from 'sequelize';
 import { configurations } from '../../core';
-import { sequelizeConnection } from '../server';
+import { SequelizeSingleton } from '../server';
 import { FieldFactory, IDates, JSONSerializer } from '../utils';
 
 interface BorrowerAttributes {
@@ -49,7 +49,11 @@ Borrower.init(
 		},
 	},
 	{
-		...FieldFactory.BasicModelConfig({ sequelize: sequelizeConnection, tableName: 'borrowers', timestamps: true }),
+		...FieldFactory.BasicModelConfig({
+			sequelize: SequelizeSingleton.getInstance().connectionDetails,
+			tableName: 'borrowers',
+			timestamps: true,
+		}),
 		indexes: [{ unique: true, fields: [{ name: 'id' }] }],
 	}
 );

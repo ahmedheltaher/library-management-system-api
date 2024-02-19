@@ -1,5 +1,5 @@
 import { Model, Optional, Transaction } from 'sequelize';
-import { sequelizeConnection } from '../server';
+import { SequelizeSingleton } from '../server';
 import { FieldFactory, IDates, JSONSerializer } from '../utils';
 
 interface BookAttributes {
@@ -54,7 +54,11 @@ Book.init(
 		shelfLocation: FieldFactory.String().NotNull().Build(),
 	},
 	{
-		...FieldFactory.BasicModelConfig({ sequelize: sequelizeConnection, tableName: 'books', timestamps: true }),
+		...FieldFactory.BasicModelConfig({
+			sequelize: SequelizeSingleton.getInstance().connectionDetails,
+			tableName: 'books',
+			timestamps: true,
+		}),
 		indexes: [
 			{ unique: true, fields: [{ name: 'id' }] },
 			{ unique: true, fields: [{ name: 'ISBN' }] },

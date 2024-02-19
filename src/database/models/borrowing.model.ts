@@ -1,5 +1,5 @@
 import { Model, Optional, Transaction } from 'sequelize';
-import { sequelizeConnection } from '../server';
+import { SequelizeSingleton } from '../server';
 import { FieldFactory, IDates, JSONSerializer } from '../utils';
 
 interface BorrowingAttributes {
@@ -44,7 +44,11 @@ Borrowing.init(
 		returnDate: FieldFactory.Date().AllowNull().Build(),
 	},
 	{
-		...FieldFactory.BasicModelConfig({ sequelize: sequelizeConnection, tableName: 'borrowings', timestamps: true }),
+		...FieldFactory.BasicModelConfig({
+			sequelize: SequelizeSingleton.getInstance().connectionDetails,
+			tableName: 'borrowings',
+			timestamps: true,
+		}),
 		indexes: [{ fields: [{ name: 'bookId' }] }, { fields: [{ name: 'borrowerId' }] }],
 	}
 );
